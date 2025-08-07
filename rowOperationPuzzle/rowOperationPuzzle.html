@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Row Operation Puzzle</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="header">
+        <h1>Row Operation Puzzle</h1>
+        <p>Transform the matrix into upper triangular form using row operations</p>
+        <div class="stats">
+            <div class="stat-item">
+                <span class="stat-label">Time:</span>
+                <span id="timer">00:00</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Operations:</span>
+                <span id="operations-count">0</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="matrix-container">
+            <div id="matrix" class="matrix"></div>
+            <div id="success-message" class="success-message hidden">
+                <h2>🎉 Congratulations!</h2>
+                <p>You've successfully transformed the matrix into upper triangular form!</p>
+                <div class="final-stats">
+                    <p>Time: <span id="final-time"></span></p>
+                    <p>Operations: <span id="final-operations"></span></p>
+                </div>
+                <button id="new-game-btn" class="btn primary">New Game</button>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <div class="operation-buttons">
+                <button id="add-btn" class="btn operation-btn" data-operation="add">
+                    <span class="key-hint">A</span>
+                    Add Rows
+                </button>
+                <button id="swap-btn" class="btn operation-btn" data-operation="swap">
+                    <span class="key-hint">S</span>
+                    Swap Rows
+                </button>
+                <button id="multiply-btn" class="btn operation-btn" data-operation="multiply">
+                    <span class="key-hint">D</span>
+                    Multiply Row
+                </button>
+            </div>
+            
+            <div class="instruction-panel">
+                <div id="instruction-text">Select an operation to begin</div>
+                <div id="selection-status" class="selection-status"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Multiply Modal -->
+    <div id="multiply-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3>Multiply Row by Constant</h3>
+            <div class="multiply-controls">
+                <button id="decrease-btn" class="btn secondary">-</button>
+                <input type="number" id="multiply-input" value="1" step="0.1">
+                <button id="increase-btn" class="btn secondary">+</button>
+            </div>
+            <div class="modal-buttons">
+                <button id="apply-multiply-btn" class="btn primary">Apply</button>
+                <button id="cancel-multiply-btn" class="btn secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Options Panel -->
+    <button id="options-btn" class="options-btn">⚙️</button>
+    <div id="options-panel" class="options-panel hidden">
+        <h3>Options</h3>
+        <div class="option-group">
+            <label for="matrix-rows">Rows:</label>
+            <input type="number" id="matrix-rows" value="3" min="2" max="6">
+        </div>
+        <div class="option-group">
+            <label for="matrix-cols">Columns:</label>
+            <input type="number" id="matrix-cols" value="3" min="2" max="6">
+        </div>
+        <div class="option-group">
+            <label for="matrix-seed">Seed:</label>
+            <input type="number" id="matrix-seed" value="12345">
+        </div>
+        <div class="option-group">
+            <label for="theme-toggle">Dark Theme:</label>
+            <input type="checkbox" id="theme-toggle">
+        </div>
+        <div class="option-buttons">
+            <button id="generate-matrix-btn" class="btn primary">New Matrix</button>
+            <button id="export-stats-btn" class="btn secondary">Export Stats</button>
+            <button id="close-options-btn" class="btn secondary">Close</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
