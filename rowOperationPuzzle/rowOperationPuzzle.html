@@ -84,19 +84,27 @@
         <h3>Options</h3>
         <div class="option-group">
             <label for="matrix-rows">Rows:</label>
-            <input type="number" id="matrix-rows" value="3" min="2" max="6">
+            <div class="number-input">
+                <button class="number-btn decrease" data-target="matrix-rows">-</button>
+                <input type="number" id="matrix-rows" value="3" min="2" max="6">
+                <button class="number-btn increase" data-target="matrix-rows">+</button>
+            </div>
         </div>
         <div class="option-group">
             <label for="matrix-cols">Columns:</label>
-            <input type="number" id="matrix-cols" value="3" min="2" max="6">
+            <div class="number-input">
+                <button class="number-btn decrease" data-target="matrix-cols">-</button>
+                <input type="number" id="matrix-cols" value="3" min="2" max="6">
+                <button class="number-btn increase" data-target="matrix-cols">+</button>
+            </div>
         </div>
         <div class="option-group">
             <label for="matrix-seed">Seed:</label>
-            <input type="number" id="matrix-seed" value="42">
-        </div>
-        <div class="option-group">
-            <label for="theme-toggle">Dark Theme:</label>
-            <input type="checkbox" id="theme-toggle">
+            <div class="number-input">
+                <button class="number-btn decrease" data-target="matrix-seed">-</button>
+                <input type="number" id="matrix-seed" value="12345">
+                <button class="number-btn increase" data-target="matrix-seed">+</button>
+            </div>
         </div>
         <div class="option-buttons">
             <button id="generate-matrix-btn" class="btn primary">New Matrix</button>

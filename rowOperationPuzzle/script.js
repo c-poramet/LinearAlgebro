@@ -17,11 +17,11 @@ class RowOperationPuzzle {
     }
     
     init() {
+        this.loadStats();
         this.setupEventListeners();
         this.generateMatrix();
         this.renderMatrix();
-        this.loadStats();
-        this.applyTheme();
+        this.updateStatsDisplay();
     }
     
     setupEventListeners() {
@@ -77,6 +77,20 @@ class RowOperationPuzzle {
         
         document.getElementById('close-options-btn').addEventListener('click', () => {
             this.hideOptionsPanel();
+        });
+        
+        // Number input buttons for options
+        document.querySelectorAll('.number-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                this.handleNumberButton(e);
+            });
+        });
+        
+        // Auto-update on input change
+        ['matrix-rows', 'matrix-cols', 'matrix-seed'].forEach(id => {
+            document.getElementById(id).addEventListener('input', () => {
+                this.autoUpdateMatrix();
+            });
         });
         
         document.getElementById('generate-matrix-btn').addEventListener('click', () => {
@@ -260,29 +274,10 @@ class RowOperationPuzzle {
         const [row1, row2] = this.selectedRows;
         const target = this.targetRow;
         
-        // Check if target row is one of the source rows - handle this case properly
-        if (target === row1 || target === row2) {
-            // If target is one of the source rows, we need to be careful
-            // Create a copy of the target row before modification
-            const originalTarget = [...this.matrix[target]];
-            
-            if (target === row1) {
-                // R[target] = R[target] + R[target] + R[row2] = 2*R[target] + R[row2]
-                for (let j = 0; j < this.cols; j++) {
-                    this.matrix[target][j] = 2 * originalTarget[j] + this.matrix[row2][j];
-                }
-            } else if (target === row2) {
-                // R[target] = R[target] + R[row1] + R[target] = 2*R[target] + R[row1]
-                for (let j = 0; j < this.cols; j++) {
-                    this.matrix[target][j] = 2 * originalTarget[j] + this.matrix[row1][j];
-                }
-            }
-        } else {
-            // Standard case: target is different from both source rows
-            // R[target] = R[target] + R[row1] + R[row2]
-            for (let j = 0; j < this.cols; j++) {
-                this.matrix[target][j] += this.matrix[row1][j] + this.matrix[row2][j];
-            }
+        // Replace target row with the sum of row1 and row2
+        // R[target] = R[row1] + R[row2]
+        for (let j = 0; j < this.cols; j++) {
+            this.matrix[target][j] = this.matrix[row1][j] + this.matrix[row2][j];
         }
         
         this.operationsCount++;
@@ -541,22 +536,47 @@ class RowOperationPuzzle {
         document.getElementById('options-panel').classList.add('hidden');
     }
     
-    toggleTheme(isDark) {
-        if (isDark) {
-            document.body.setAttribute('data-theme', 'dark');
-            localStorage.setItem('theme', 'dark');
-        } else {
-            document.body.removeAttribute('data-theme');
-            localStorage.setItem('theme', 'light');
+    handleNumberButton(e) {
+        const button = e.target;
+        const targetId = button.dataset.target;
+        const input = document.getElementById(targetId);
+        const isIncrease = button.classList.contains('increase');
+        const isDecrease = button.classList.contains('decrease');
+        
+        let currentValue = parseInt(input.value);
+        const min = parseInt(input.min) || 1;
+        const max = parseInt(input.max) || 999999;
+        
+        if (isIncrease && currentValue < max) {
+            if (targetId === 'matrix-seed') {
+                currentValue += 1000; // Larger increment for seed
+            } else {
+                currentValue += 1;
+            }
+        } else if (isDecrease && currentValue > min) {
+            if (targetId === 'matrix-seed') {
+                currentValue -= 1000; // Larger decrement for seed
+            } else {
+                currentValue -= 1;
+            }
         }
+        
+        input.value = currentValue;
+        this.autoUpdateMatrix();
     }
     
-    applyTheme() {
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'dark') {
-            document.body.setAttribute('data-theme', 'dark');
-            document.getElementById('theme-toggle').checked = true;
+    autoUpdateMatrix() {
+        // Add a small delay to prevent rapid updates
+        if (this.updateTimeout) {
+            clearTimeout(this.updateTimeout);
         }
+        
+        this.updateTimeout = setTimeout(() => {
+            this.updateMatrixSettings();
+            this.generateMatrix();
+            this.renderMatrix();
+            this.resetGame();
+        }, 300);
     }
     
     saveStats() {

@@ -573,31 +573,72 @@ body {
 .option-group label {
     color: var(--text-secondary);
     font-weight: 500;
+    flex: 1;
+}
+
+.number-input {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    backdrop-filter: blur(15px);
+}
+
+.number-btn {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: var(--bg-glass);
+    color: var(--text-primary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    transition: all 0.2s ease;
+    border-right: 1px solid var(--border);
+}
+
+.number-btn:last-child {
+    border-right: none;
+    border-left: 1px solid var(--border);
+}
+
+.number-btn:hover {
+    background: var(--accent-primary);
+    color: black;
+    box-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+}
+
+.number-btn:active {
+    transform: scale(0.95);
 }
 
 .option-group input[type="number"] {
-    width: 80px;
+    width: 60px;
     padding: 8px 12px;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    background: var(--bg-secondary);
+    border: none;
+    background: transparent;
     color: var(--text-primary);
     text-align: center;
-    backdrop-filter: blur(15px);
-    transition: all 0.3s ease;
-}
-
-.option-group input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-    accent-color: var(--accent-primary);
-    border-radius: 4px;
-}
-
-.option-group input:focus {
+    font-size: 1rem;
+    font-weight: 600;
     outline: none;
-    border-color: var(--accent-primary);
-    box-shadow: 0 0 15px rgba(0, 255, 65, 0.4);
+}
+
+.option-group input[type="number"]::-webkit-outer-spin-button,
+.option-group input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.option-group input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
 }
 
 .option-buttons {
