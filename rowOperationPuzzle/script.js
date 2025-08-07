@@ -80,7 +80,7 @@ class RowOperationPuzzle {
         // Multiply/Divide operation modal
         document.getElementById('divide-operation-btn').addEventListener('click', () => {
             this.multiplyOperationType = 'divide';
-            this.hideMultiplyDivideModal();
+            this.applyMultiplyDivide();
         });
 
         // Multiply/Divide modal input controls

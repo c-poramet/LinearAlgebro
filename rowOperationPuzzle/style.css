@@ -452,9 +452,44 @@ body {
     font-size: 1rem;
     backdrop-filter: blur(15px);
     transition: all 0.3s ease;
+    appearance: textfield;
+    -moz-appearance: textfield; /* Firefox */
+}
+
+#multiply-input::-webkit-outer-spin-button,
+#multiply-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 #multiply-input:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 20px rgba(0, 255, 65, 0.4);
+}
+
+#multiply-divide-input {
+    width: 120px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    text-align: center;
+    font-size: 1rem;
+    backdrop-filter: blur(15px);
+    transition: all 0.3s ease;
+    appearance: textfield;
+    -moz-appearance: textfield; /* Firefox */
+}
+
+#multiply-divide-input::-webkit-outer-spin-button,
+#multiply-divide-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+#multiply-divide-input:focus {
     outline: none;
     border-color: var(--accent-primary);
     box-shadow: 0 0 20px rgba(0, 255, 65, 0.4);
