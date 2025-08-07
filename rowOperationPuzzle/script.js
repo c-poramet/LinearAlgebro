@@ -273,6 +273,11 @@ class RowOperationPuzzle {
     }
     
     selectOperation(operation) {
+        // If in VIM mode, cancel current VIM operation and switch modes
+        if (this.vimMode) {
+            this.cancelVimOperation();
+        }
+        
         // Clear previous selections
         this.clearSelections();
         this.currentOperation = operation;
@@ -497,6 +502,7 @@ class RowOperationPuzzle {
     updateSelectionDisplay() {
         document.querySelectorAll('.matrix-row').forEach(row => {
             row.classList.remove('selected', 'target', 'highlighted');
+            row.removeAttribute('data-selection-order');
         });
         
         // Show VIM highlight
@@ -507,11 +513,12 @@ class RowOperationPuzzle {
             }
         }
         
-        // Show selected rows
-        this.selectedRows.forEach(index => {
+        // Show selected rows with order indicators
+        this.selectedRows.forEach((index, order) => {
             const row = document.querySelector(`[data-row-index="${index}"]`);
             if (row) {
                 row.classList.add('selected');
+                row.setAttribute('data-selection-order', order + 1);
             }
         });
         
@@ -1074,6 +1081,28 @@ class RowOperationPuzzle {
         });
         
         this.clearSelections();
+    }
+
+    cancelVimOperation() {
+        // Cancel current VIM operation but stay in VIM mode
+        this.vimOperation = null;
+        this.vimPromptOperationType = null;
+        this.addOperationType = 'add'; // Reset to default
+        this.multiplyOperationType = 'multiply'; // Reset to default
+        
+        // Close any open modals
+        this.hideVimPromptModal();
+        this.hideModal('add-modal');
+        this.hideModal('multiply-divide-modal');
+        
+        // Clear selections but keep VIM mode active
+        this.clearSelections();
+        this.selectedRows = [];
+        this.targetRow = null;
+        
+        // Keep VIM mode active and maintain highlight
+        this.updateSelectionDisplay();
+        this.updateInstructions();
     }
 
     generateCSV() {
