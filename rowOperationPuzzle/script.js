@@ -841,8 +841,7 @@ class RowOperationPuzzle {
                 break;
             case 'd':
                 if (this.isAwaitingMultiplyOperationType()) {
-                    this.multiplyOperationType = 'multiply';
-                    this.executeMultiplyOperation();
+                    this.promptVimMultiplyValue('multiply');
                 }
                 break;
             case 'f': // Special mode switch
@@ -850,8 +849,7 @@ class RowOperationPuzzle {
                     this.addOperationType = 'subtract';
                     this.executeAddOperation();
                 } else if (this.isAwaitingMultiplyOperationType()) {
-                    this.multiplyOperationType = 'divide';
-                    this.executeMultiplyOperation();
+                    this.promptVimMultiplyValue('divide');
                 }
                 break;
             case 'enter':
@@ -859,8 +857,7 @@ class RowOperationPuzzle {
                     this.addOperationType = 'add';
                     this.executeAddOperation();
                 } else if (this.isAwaitingMultiplyOperationType()) {
-                    this.multiplyOperationType = 'multiply';
-                    this.executeMultiplyOperation();
+                    this.promptVimMultiplyValue('multiply');
                 }
                 break;
         }
@@ -915,6 +912,23 @@ class RowOperationPuzzle {
             `Press D (or Enter) for multiply, F for divide`;
     }
 
+    promptVimMultiplyValue(operationType) {
+        const value = parseFloat(prompt(
+            operationType === 'multiply' 
+                ? `Enter value to multiply row ${this.selectedRows[0] + 1} by:` 
+                : `Enter value to divide row ${this.selectedRows[0] + 1} by:`
+        ));
+        
+        if (value === null || isNaN(value) || value === 0) {
+            // User cancelled or entered invalid value
+            this.updateInstructions('Invalid value. Press D (or Enter) for multiply, F for divide');
+            return;
+        }
+        
+        this.multiplyOperationType = operationType;
+        this.executeMultiplyOperation(value);
+    }
+
     isAwaitingAddOperationType() {
         return this.vimMode && this.vimOperation === 'add' && this.selectedRows.length === 2;
     }
@@ -957,8 +971,7 @@ class RowOperationPuzzle {
         this.checkWinCondition();
     }
 
-    executeMultiplyOperation() {
-        const value = 2; // Default multiplication value for VIM mode
+    executeMultiplyOperation(value = 2) {
         const rowIndex = this.selectedRows[0];
         
         for (let j = 0; j < this.cols; j++) {
