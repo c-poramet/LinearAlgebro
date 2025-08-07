@@ -1221,11 +1221,16 @@ class RowOperationPuzzle {
             
             historyItem.innerHTML = `
                 <div class="operation-step">Step ${this.operationHistory.length - index}</div>
-                <div class="operation-latex">${operation.latex}</div>
+                <div class="operation-latex">$${operation.latex}$</div>
             `;
             
             historyList.appendChild(historyItem);
         });
+        
+        // Trigger MathJax rendering for the new content
+        if (typeof MathJax !== 'undefined') {
+            MathJax.typesetPromise([historyList]).catch((err) => console.log(err.message));
+        }
     }
     
     clearOperationHistory() {
