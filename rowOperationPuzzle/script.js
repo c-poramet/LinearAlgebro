@@ -869,15 +869,24 @@ class RowOperationPuzzle {
                     this.exitVimMode();
                 }
                 break;
-            case 'a': // Handle operation-specific keys
+            case 'a': // Add operation or handle add-specific actions
                 if (this.isAwaitingAddOperationType()) {
                     this.addOperationType = 'add';
                     this.executeAddOperation();
+                } else {
+                    // Switch to add operation
+                    this.startVimOperation('add');
                 }
                 break;
-            case 'd':
+            case 's': // Swap operation
+                this.startVimOperation('swap');
+                break;
+            case 'd': // Multiply operation or handle multiply-specific actions
                 if (this.isAwaitingMultiplyOperationType()) {
                     this.promptVimMultiplyValue('multiply');
+                } else {
+                    // Switch to multiply operation
+                    this.startVimOperation('multiply');
                 }
                 break;
             case 'f': // Confirm/Apply in modals or special mode switch
