@@ -432,12 +432,6 @@ class RowOperationPuzzle {
         this.operationsCount = 0;
         this.updateOperationsDisplay();
         this.startTimer();
-        
-        // Hide header when game starts
-        const header = document.getElementById('game-header');
-        if (header) {
-            header.classList.add('hidden');
-        }
     }
     
     startTimer() {
@@ -508,12 +502,6 @@ class RowOperationPuzzle {
         this.updateOperationsDisplay();
         this.clearSelections();
         this.updateInstructions();
-        
-        // Show header when game resets
-        const header = document.getElementById('game-header');
-        if (header) {
-            header.classList.remove('hidden');
-        }
     }
     
     updateMatrixSettings() {
