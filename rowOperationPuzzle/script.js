@@ -7,6 +7,7 @@ class RowOperationPuzzle {
         this.currentOperation = null;
         this.selectedRows = [];
         this.targetRow = null;
+        this.addOperationType = 'add'; // 'add' or 'subtract'
         this.gameStarted = false;
         this.startTime = null;
         this.operationsCount = 0;
@@ -67,6 +68,22 @@ class RowOperationPuzzle {
         
         document.getElementById('cancel-multiply-btn').addEventListener('click', () => {
             this.hideMultiplyModal();
+        });
+
+        // Add operation modal
+        document.getElementById('add-operation-btn').addEventListener('click', () => {
+            this.addOperationType = 'add';
+            this.hideAddModal();
+        });
+
+        document.getElementById('subtract-operation-btn').addEventListener('click', () => {
+            this.addOperationType = 'subtract';
+            this.hideAddModal();
+        });
+
+        document.getElementById('cancel-add-btn').addEventListener('click', () => {
+            this.hideAddModal();
+            this.clearSelections();
         });
         
         // Options
@@ -247,6 +264,9 @@ class RowOperationPuzzle {
         if (this.selectedRows.length < 2) {
             if (!this.selectedRows.includes(rowIndex)) {
                 this.selectedRows.push(rowIndex);
+                if (this.selectedRows.length === 2) {
+                    this.showAddModal();
+                }
             }
         } else if (this.targetRow === null) {
             this.targetRow = rowIndex;
@@ -274,10 +294,14 @@ class RowOperationPuzzle {
         const [row1, row2] = this.selectedRows;
         const target = this.targetRow;
         
-        // Replace target row with the sum of row1 and row2
-        // R[target] = R[row1] + R[row2]
+        // Replace target row with the operation result
+        // R[target] = R[row1] + R[row2] (for addition) or R[target] = R[row1] - R[row2] (for subtraction)
         for (let j = 0; j < this.cols; j++) {
-            this.matrix[target][j] = this.matrix[row1][j] + this.matrix[row2][j];
+            if (this.addOperationType === 'add') {
+                this.matrix[target][j] = this.matrix[row1][j] + this.matrix[row2][j];
+            } else {
+                this.matrix[target][j] = this.matrix[row1][j] - this.matrix[row2][j];
+            }
         }
         
         this.operationsCount++;
@@ -309,6 +333,18 @@ class RowOperationPuzzle {
         document.getElementById('multiply-modal').classList.add('hidden');
         this.clearSelections();
     }
+
+    showAddModal() {
+        const [row1, row2] = this.selectedRows;
+        document.getElementById('add-row1').textContent = row1 + 1;
+        document.getElementById('add-row2').textContent = row2 + 1;
+        document.getElementById('add-modal').classList.remove('hidden');
+    }
+
+    hideAddModal() {
+        document.getElementById('add-modal').classList.add('hidden');
+        // Don't clear selections here - we still need them for the operation
+    }
     
     applyMultiply() {
         const multiplier = parseFloat(document.getElementById('multiply-input').value);
@@ -336,6 +372,7 @@ class RowOperationPuzzle {
         this.selectedRows = [];
         this.targetRow = null;
         this.currentOperation = null;
+        this.addOperationType = 'add'; // Reset to default
         
         document.querySelectorAll('.operation-btn').forEach(btn => btn.classList.remove('active'));
         document.querySelectorAll('.matrix-row').forEach(row => {
