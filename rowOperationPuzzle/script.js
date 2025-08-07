@@ -3,7 +3,7 @@ class RowOperationPuzzle {
         this.matrix = [];
         this.rows = 3;
         this.cols = 3;
-        this.seed = 12345;
+        this.seed = Date.now(); // Use current timestamp for randomness
         this.currentOperation = null;
         this.selectedRows = [];
         this.targetRow = null;
@@ -21,7 +21,6 @@ class RowOperationPuzzle {
         this.setupEventListeners();
         this.generateMatrix();
         this.renderMatrix();
-        this.updateStatsDisplay();
     }
     
     setupEventListeners() {
@@ -79,6 +78,11 @@ class RowOperationPuzzle {
             this.hideOptionsPanel();
         });
         
+        // New Matrix button
+        document.getElementById('new-matrix-btn').addEventListener('click', () => {
+            this.generateNewMatrix();
+        });
+        
         // Number input buttons for options
         document.querySelectorAll('.number-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -103,10 +107,6 @@ class RowOperationPuzzle {
         
         document.getElementById('export-stats-btn').addEventListener('click', () => {
             this.exportStats();
-        });
-        
-        document.getElementById('theme-toggle').addEventListener('change', (e) => {
-            this.toggleTheme(e.target.checked);
         });
         
         document.getElementById('new-game-btn').addEventListener('click', () => {
@@ -522,6 +522,14 @@ class RowOperationPuzzle {
     
     hideOptionsPanel() {
         document.getElementById('options-panel').classList.add('hidden');
+    }
+    
+    generateNewMatrix() {
+        // Use current timestamp for new random seed
+        this.seed = Date.now();
+        this.generateMatrix();
+        this.renderMatrix();
+        this.resetGame();
     }
     
     handleNumberButton(e) {

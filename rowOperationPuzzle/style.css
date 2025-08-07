@@ -491,6 +491,32 @@ body {
     border-color: var(--accent-primary);
 }
 
+.new-matrix-btn {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    padding: 12px 20px;
+    border-radius: 12px;
+    border: 1px solid var(--accent-primary);
+    background: var(--bg-glass);
+    backdrop-filter: blur(var(--blur));
+    color: var(--accent-primary);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 8px 25px var(--shadow), 0 0 20px rgba(0, 255, 65, 0.3);
+    transition: all 0.3s ease;
+    z-index: 100;
+    letter-spacing: 0.5px;
+}
+
+.new-matrix-btn:hover {
+    background: var(--accent-primary);
+    color: var(--bg-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 35px var(--shadow-hover), 0 0 30px rgba(0, 255, 65, 0.6);
+}
+
 .options-panel {
     position: fixed;
     bottom: 90px;
