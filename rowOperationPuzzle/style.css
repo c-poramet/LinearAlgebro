@@ -472,6 +472,13 @@ body {
     justify-content: center;
 }
 
+.modal-hint {
+    margin-top: 15px;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
 .options-btn {
     position: fixed;
     bottom: 20px;

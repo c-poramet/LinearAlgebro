@@ -71,19 +71,9 @@ class RowOperationPuzzle {
         });
 
         // Add operation modal
-        document.getElementById('add-operation-btn').addEventListener('click', () => {
-            this.addOperationType = 'add';
-            this.hideAddModal();
-        });
-
         document.getElementById('subtract-operation-btn').addEventListener('click', () => {
             this.addOperationType = 'subtract';
             this.hideAddModal();
-        });
-
-        document.getElementById('cancel-add-btn').addEventListener('click', () => {
-            this.hideAddModal();
-            this.clearSelections();
         });
         
         // Options
@@ -373,6 +363,7 @@ class RowOperationPuzzle {
         this.targetRow = null;
         this.currentOperation = null;
         this.addOperationType = 'add'; // Reset to default
+        this.hideAddModal(); // Hide the add modal if it's open
         
         document.querySelectorAll('.operation-btn').forEach(btn => btn.classList.remove('active'));
         document.querySelectorAll('.matrix-row').forEach(row => {
