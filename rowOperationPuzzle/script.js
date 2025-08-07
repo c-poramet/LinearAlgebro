@@ -8,6 +8,7 @@ class RowOperationPuzzle {
         this.selectedRows = [];
         this.targetRow = null;
         this.addOperationType = 'add'; // 'add' or 'subtract'
+        this.multiplyOperationType = 'multiply'; // 'multiply' or 'divide'
         this.gameStarted = false;
         this.startTime = null;
         this.operationsCount = 0;
@@ -74,6 +75,12 @@ class RowOperationPuzzle {
         document.getElementById('subtract-operation-btn').addEventListener('click', () => {
             this.addOperationType = 'subtract';
             this.hideAddModal();
+        });
+
+        // Multiply/Divide operation modal
+        document.getElementById('divide-operation-btn').addEventListener('click', () => {
+            this.multiplyOperationType = 'divide';
+            this.hideMultiplyDivideModal();
         });
         
         // Options
@@ -277,7 +284,7 @@ class RowOperationPuzzle {
     
     handleMultiplyRowSelection(rowIndex) {
         this.selectedRows = [rowIndex];
-        this.showMultiplyModal();
+        this.showMultiplyDivideModal();
     }
     
     performAddOperation() {
@@ -335,19 +342,34 @@ class RowOperationPuzzle {
         document.getElementById('add-modal').classList.add('hidden');
         // Don't clear selections here - we still need them for the operation
     }
+
+    showMultiplyDivideModal() {
+        const rowIndex = this.selectedRows[0];
+        document.getElementById('multiply-row').textContent = rowIndex + 1;
+        document.getElementById('multiply-divide-modal').classList.remove('hidden');
+    }
+
+    hideMultiplyDivideModal() {
+        document.getElementById('multiply-divide-modal').classList.add('hidden');
+        // Don't clear selections here - we still need them for the operation
+    }
     
     applyMultiply() {
         const multiplier = parseFloat(document.getElementById('multiply-input').value);
         if (multiplier === 0 || isNaN(multiplier)) {
-            alert('Multiplier cannot be zero or invalid');
+            alert('Value cannot be zero or invalid');
             return;
         }
         
         const rowIndex = this.selectedRows[0];
         
-        // Multiply row by constant
+        // Apply multiplication or division
         for (let j = 0; j < this.cols; j++) {
-            this.matrix[rowIndex][j] *= multiplier;
+            if (this.multiplyOperationType === 'multiply') {
+                this.matrix[rowIndex][j] *= multiplier;
+            } else {
+                this.matrix[rowIndex][j] /= multiplier;
+            }
         }
         
         this.operationsCount++;
@@ -363,7 +385,9 @@ class RowOperationPuzzle {
         this.targetRow = null;
         this.currentOperation = null;
         this.addOperationType = 'add'; // Reset to default
+        this.multiplyOperationType = 'multiply'; // Reset to default
         this.hideAddModal(); // Hide the add modal if it's open
+        this.hideMultiplyDivideModal(); // Hide the multiply-divide modal if it's open
         
         document.querySelectorAll('.operation-btn').forEach(btn => btn.classList.remove('active'));
         document.querySelectorAll('.matrix-row').forEach(row => {
