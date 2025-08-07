@@ -90,10 +90,17 @@
         <div class="modal-content">
             <h3>Multiply or Divide Row</h3>
             <p>Row <span id="multiply-row"></span></p>
+            <div class="multiply-controls">
+                <button id="multiply-decrease-btn" class="btn secondary">-</button>
+                <input type="number" id="multiply-divide-input" value="1" step="0.1">
+                <button id="multiply-increase-btn" class="btn secondary">+</button>
+            </div>
             <div class="modal-buttons">
                 <button id="divide-operation-btn" class="btn secondary">÷ (Divide)</button>
+                <button id="apply-multiply-divide-btn" class="btn primary">Apply</button>
+                <button id="cancel-multiply-divide-btn" class="btn secondary">Cancel</button>
             </div>
-            <p class="modal-hint">Click ÷ for division, or enter value for multiplication</p>
+            <p class="modal-hint">Click ÷ for division, or Apply for multiplication</p>
         </div>
     </div>
 

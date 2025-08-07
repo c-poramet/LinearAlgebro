@@ -82,6 +82,28 @@ class RowOperationPuzzle {
             this.multiplyOperationType = 'divide';
             this.hideMultiplyDivideModal();
         });
+
+        // Multiply/Divide modal input controls
+        document.getElementById('multiply-increase-btn').addEventListener('click', () => {
+            const input = document.getElementById('multiply-divide-input');
+            input.value = (parseFloat(input.value) + 0.5).toFixed(1);
+        });
+        
+        document.getElementById('multiply-decrease-btn').addEventListener('click', () => {
+            const input = document.getElementById('multiply-divide-input');
+            const newValue = parseFloat(input.value) - 0.5;
+            if (newValue !== 0) {
+                input.value = newValue.toFixed(1);
+            }
+        });
+
+        document.getElementById('apply-multiply-divide-btn').addEventListener('click', () => {
+            this.applyMultiplyDivide();
+        });
+
+        document.getElementById('cancel-multiply-divide-btn').addEventListener('click', () => {
+            this.hideMultiplyDivideModal();
+        });
         
         // Options
         document.getElementById('options-btn').addEventListener('click', () => {
@@ -347,6 +369,7 @@ class RowOperationPuzzle {
         const rowIndex = this.selectedRows[0];
         document.getElementById('multiply-row').textContent = rowIndex + 1;
         document.getElementById('multiply-divide-modal').classList.remove('hidden');
+        document.getElementById('multiply-divide-input').focus();
     }
 
     hideMultiplyDivideModal() {
@@ -376,6 +399,32 @@ class RowOperationPuzzle {
         this.updateOperationsDisplay();
         this.renderMatrix();
         this.hideMultiplyModal();
+        this.clearSelections();
+        this.checkWinCondition();
+    }
+
+    applyMultiplyDivide() {
+        const value = parseFloat(document.getElementById('multiply-divide-input').value);
+        if (value === 0 || isNaN(value)) {
+            alert('Value cannot be zero or invalid');
+            return;
+        }
+        
+        const rowIndex = this.selectedRows[0];
+        
+        // Apply multiplication or division based on the operation type
+        for (let j = 0; j < this.cols; j++) {
+            if (this.multiplyOperationType === 'divide') {
+                this.matrix[rowIndex][j] /= value;
+            } else {
+                this.matrix[rowIndex][j] *= value;
+            }
+        }
+        
+        this.operationsCount++;
+        this.updateOperationsDisplay();
+        this.renderMatrix();
+        this.hideMultiplyDivideModal();
         this.clearSelections();
         this.checkWinCondition();
     }
