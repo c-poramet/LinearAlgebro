@@ -871,8 +871,10 @@ class RowOperationPuzzle {
                     this.promptVimMultiplyValue('multiply');
                 }
                 break;
-            case 'f': // Special mode switch
-                if (this.isAwaitingAddOperationType()) {
+            case 'f': // Special mode switch or confirm in prompt
+                if (!document.getElementById('vim-prompt-modal').classList.contains('hidden')) {
+                    this.confirmVimPrompt();
+                } else if (this.isAwaitingAddOperationType()) {
                     this.addOperationType = 'subtract';
                     this.executeAddOperation();
                 } else if (this.isAwaitingMultiplyOperationType()) {

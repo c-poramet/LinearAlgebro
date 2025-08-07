@@ -521,6 +521,33 @@ body {
     box-shadow: 0 0 20px rgba(0, 255, 65, 0.4);
 }
 
+#vim-prompt-input {
+    width: 120px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    text-align: center;
+    font-size: 1rem;
+    backdrop-filter: blur(15px);
+    transition: all 0.3s ease;
+    appearance: textfield;
+    -moz-appearance: textfield; /* Firefox */
+}
+
+#vim-prompt-input::-webkit-outer-spin-button,
+#vim-prompt-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+#vim-prompt-input:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 20px rgba(0, 255, 65, 0.4);
+}
+
 .modal-buttons {
     display: flex;
     gap: 15px;
