@@ -219,7 +219,7 @@ body {
     backdrop-filter: blur(var(--blur));
     background: var(--bg-glass);
     border-radius: 20px 20px 0 0;
-    padding: 25px 30px;
+    padding: 25px 30px 35px 30px;
     border: 1px solid var(--border);
     border-bottom: none;
     box-shadow: 0 -4px 20px var(--shadow);
