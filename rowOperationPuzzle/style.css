@@ -242,9 +242,9 @@ body {
 }
 
 .matrix-row.selected::before {
-    content: attr(data-selection-order);
+    content: '';
     position: absolute;
-    left: -15px;
+    left: -20px;
     top: 50%;
     transform: translateY(-50%);
     width: 0;
@@ -258,7 +258,7 @@ body {
 .matrix-row.selected::after {
     content: attr(data-selection-order);
     position: absolute;
-    left: -35px;
+    left: -45px;
     top: 50%;
     transform: translateY(-50%);
     background: var(--accent-primary);
