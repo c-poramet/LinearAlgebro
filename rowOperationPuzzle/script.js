@@ -19,6 +19,7 @@ class RowOperationPuzzle {
         this.vimMode = false;
         this.highlightedRow = 0;
         this.vimOperation = null;
+        this.vimPromptOperationType = null;
         
         this.init();
     }
@@ -112,6 +113,28 @@ class RowOperationPuzzle {
 
         document.getElementById('cancel-multiply-divide-btn').addEventListener('click', () => {
             this.hideMultiplyDivideModal();
+        });
+
+        // VIM prompt modal
+        document.getElementById('vim-increase-btn').addEventListener('click', () => {
+            const input = document.getElementById('vim-prompt-input');
+            input.value = (parseFloat(input.value) + 0.5).toFixed(1);
+        });
+        
+        document.getElementById('vim-decrease-btn').addEventListener('click', () => {
+            const input = document.getElementById('vim-prompt-input');
+            const newValue = parseFloat(input.value) - 0.5;
+            if (newValue !== 0) {
+                input.value = newValue.toFixed(1);
+            }
+        });
+
+        document.getElementById('vim-prompt-confirm').addEventListener('click', () => {
+            this.confirmVimPrompt();
+        });
+
+        document.getElementById('vim-prompt-cancel').addEventListener('click', () => {
+            this.cancelVimPrompt();
         });
         
         // Options
@@ -830,8 +853,12 @@ class RowOperationPuzzle {
                 e.preventDefault();
                 this.selectVimRow();
                 break;
-            case 'escape': // Exit VIM mode
-                this.exitVimMode();
+            case 'escape': // Exit VIM mode or close prompt
+                if (!document.getElementById('vim-prompt-modal').classList.contains('hidden')) {
+                    this.cancelVimPrompt();
+                } else {
+                    this.exitVimMode();
+                }
                 break;
             case 'a': // Handle operation-specific keys
                 if (this.isAwaitingAddOperationType()) {
@@ -853,7 +880,9 @@ class RowOperationPuzzle {
                 }
                 break;
             case 'enter':
-                if (this.isAwaitingAddOperationType()) {
+                if (!document.getElementById('vim-prompt-modal').classList.contains('hidden')) {
+                    this.confirmVimPrompt();
+                } else if (this.isAwaitingAddOperationType()) {
                     this.addOperationType = 'add';
                     this.executeAddOperation();
                 } else if (this.isAwaitingMultiplyOperationType()) {
@@ -913,20 +942,47 @@ class RowOperationPuzzle {
     }
 
     promptVimMultiplyValue(operationType) {
-        const value = parseFloat(prompt(
-            operationType === 'multiply' 
-                ? `Enter value to multiply row ${this.selectedRows[0] + 1} by:` 
-                : `Enter value to divide row ${this.selectedRows[0] + 1} by:`
-        ));
+        this.vimPromptOperationType = operationType;
         
-        if (value === null || isNaN(value) || value === 0) {
-            // User cancelled or entered invalid value
-            this.updateInstructions('Invalid value. Press D (or Enter) for multiply, F for divide');
+        // Update modal content
+        const title = document.getElementById('vim-prompt-title');
+        const message = document.getElementById('vim-prompt-message');
+        
+        if (operationType === 'multiply') {
+            title.textContent = 'Multiply Row';
+            message.textContent = `Enter value to multiply row ${this.selectedRows[0] + 1} by:`;
+        } else {
+            title.textContent = 'Divide Row';
+            message.textContent = `Enter value to divide row ${this.selectedRows[0] + 1} by:`;
+        }
+        
+        // Reset and show modal
+        document.getElementById('vim-prompt-input').value = '2';
+        document.getElementById('vim-prompt-modal').classList.remove('hidden');
+        document.getElementById('vim-prompt-input').focus();
+        document.getElementById('vim-prompt-input').select();
+    }
+
+    confirmVimPrompt() {
+        const value = parseFloat(document.getElementById('vim-prompt-input').value);
+        
+        if (isNaN(value) || value === 0) {
+            alert('Invalid value. Please enter a non-zero number.');
             return;
         }
         
-        this.multiplyOperationType = operationType;
+        this.hideVimPromptModal();
+        this.multiplyOperationType = this.vimPromptOperationType;
         this.executeMultiplyOperation(value);
+    }
+
+    cancelVimPrompt() {
+        this.hideVimPromptModal();
+        this.updateInstructions('Operation cancelled. Press D (or Enter) for multiply, F for divide');
+    }
+
+    hideVimPromptModal() {
+        document.getElementById('vim-prompt-modal').classList.add('hidden');
     }
 
     isAwaitingAddOperationType() {
@@ -993,8 +1049,12 @@ class RowOperationPuzzle {
         this.vimMode = false;
         this.vimOperation = null;
         this.highlightedRow = 0;
+        this.vimPromptOperationType = null;
         this.addOperationType = 'add'; // Reset to default
         this.multiplyOperationType = 'multiply'; // Reset to default
+        
+        // Close VIM prompt modal if open
+        this.hideVimPromptModal();
         
         // Clear highlights and selections
         document.querySelectorAll('.matrix-row').forEach(row => {

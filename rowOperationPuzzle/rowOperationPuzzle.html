@@ -99,6 +99,24 @@
         </div>
     </div>
 
+    <!-- VIM Prompt Modal -->
+    <div id="vim-prompt-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3 id="vim-prompt-title">Enter Value</h3>
+            <p id="vim-prompt-message">Enter the value:</p>
+            <div class="multiply-controls">
+                <button id="vim-decrease-btn" class="btn secondary">-</button>
+                <input type="number" id="vim-prompt-input" value="2" step="0.1">
+                <button id="vim-increase-btn" class="btn secondary">+</button>
+            </div>
+            <div class="modal-buttons">
+                <button id="vim-prompt-confirm" class="btn primary">Confirm</button>
+                <button id="vim-prompt-cancel" class="btn secondary">Cancel</button>
+            </div>
+            <p class="modal-hint">Enter value and press Confirm, or press Cancel/ESC to exit</p>
+        </div>
+    </div>
+
     <!-- Options Panel -->
     <button id="options-btn" class="options-btn">⚙️</button>
     <button id="new-matrix-btn" class="new-matrix-btn">NEW MATRIX</button>
