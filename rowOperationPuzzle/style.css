@@ -474,7 +474,7 @@ body {
 
 .options-btn {
     position: fixed;
-    bottom: 20px;
+    bottom: 0px;
     right: 20px;
     width: 56px;
     height: 56px;
@@ -501,7 +501,7 @@ body {
 
 .new-matrix-btn {
     position: fixed;
-    bottom: 20px;
+    bottom: 0px;
     left: 20px;
     padding: 12px 20px;
     border-radius: 12px;
