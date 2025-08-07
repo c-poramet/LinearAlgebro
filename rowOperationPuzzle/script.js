@@ -15,6 +15,9 @@ class RowOperationPuzzle {
         this.gameStats = [];
         this.timerInterval = null;
         
+        // Operation history for LaTeX display
+        this.operationHistory = [];
+        
         // VIM mode properties
         this.vimMode = false;
         this.highlightedRow = 0;
@@ -367,6 +370,13 @@ class RowOperationPuzzle {
             }
         }
         
+        // Add to operation history
+        this.addOperationToHistory('add', {
+            sourceRow: this.addOperationType === 'add' ? row2 : row2,
+            targetRow: target,
+            operation: this.addOperationType
+        });
+        
         this.operationsCount++;
         this.updateOperationsDisplay();
         this.renderMatrix();
@@ -379,6 +389,12 @@ class RowOperationPuzzle {
         
         // Swap rows
         [this.matrix[row1], this.matrix[row2]] = [this.matrix[row2], this.matrix[row1]];
+        
+        // Add to operation history
+        this.addOperationToHistory('swap', {
+            row1: row1,
+            row2: row2
+        });
         
         this.operationsCount++;
         this.updateOperationsDisplay();
@@ -443,6 +459,13 @@ class RowOperationPuzzle {
             }
         }
         
+        // Add to operation history
+        this.addOperationToHistory('multiply', {
+            row: rowIndex,
+            factor: multiplier,
+            operation: this.multiplyOperationType
+        });
+        
         this.operationsCount++;
         this.updateOperationsDisplay();
         this.renderMatrix();
@@ -468,6 +491,13 @@ class RowOperationPuzzle {
                 this.matrix[rowIndex][j] *= value;
             }
         }
+        
+        // Add to operation history
+        this.addOperationToHistory('multiply', {
+            row: rowIndex,
+            factor: value,
+            operation: this.multiplyOperationType
+        });
         
         this.operationsCount++;
         this.updateOperationsDisplay();
@@ -727,6 +757,7 @@ class RowOperationPuzzle {
         this.gameStarted = false;
         this.startTime = null;
         this.operationsCount = 0;
+        this.clearOperationHistory();
         clearInterval(this.timerInterval);
         
         document.getElementById('timer').textContent = '00:00';
@@ -1032,6 +1063,13 @@ class RowOperationPuzzle {
             }
         }
         
+        // Add to operation history
+        this.addOperationToHistory('add', {
+            sourceRow: row2,
+            targetRow: row1,
+            operation: this.addOperationType
+        });
+        
         this.operationsCount++;
         this.updateOperationsDisplay();
         this.renderMatrix();
@@ -1047,6 +1085,12 @@ class RowOperationPuzzle {
             this.matrix[row1][j] = this.matrix[row2][j];
             this.matrix[row2][j] = temp;
         }
+        
+        // Add to operation history
+        this.addOperationToHistory('swap', {
+            row1: row1,
+            row2: row2
+        });
         
         this.operationsCount++;
         this.updateOperationsDisplay();
@@ -1065,6 +1109,13 @@ class RowOperationPuzzle {
                 this.matrix[rowIndex][j] /= value;
             }
         }
+        
+        // Add to operation history
+        this.addOperationToHistory('multiply', {
+            row: rowIndex,
+            factor: value,
+            operation: this.multiplyOperationType
+        });
         
         this.operationsCount++;
         this.updateOperationsDisplay();
@@ -1112,6 +1163,74 @@ class RowOperationPuzzle {
         // Keep VIM mode active and maintain highlight
         this.updateSelectionDisplay();
         this.updateInstructions();
+    }
+
+    addOperationToHistory(operationType, details) {
+        const operation = {
+            type: operationType,
+            details: details,
+            latex: this.generateLatexForOperation(operationType, details),
+            timestamp: Date.now()
+        };
+        
+        this.operationHistory.push(operation);
+        this.updateHistoryDisplay();
+    }
+    
+    generateLatexForOperation(operationType, details) {
+        switch(operationType) {
+            case 'add':
+                if (details.operation === 'add') {
+                    return `R_{${details.targetRow + 1}} \\leftarrow R_{${details.targetRow + 1}} + R_{${details.sourceRow + 1}}`;
+                } else {
+                    return `R_{${details.targetRow + 1}} \\leftarrow R_{${details.targetRow + 1}} - R_{${details.sourceRow + 1}}`;
+                }
+            case 'swap':
+                return `R_{${details.row1 + 1}} \\leftrightarrow R_{${details.row2 + 1}}`;
+            case 'multiply':
+                if (details.operation === 'multiply') {
+                    return `R_{${details.row + 1}} \\leftarrow ${details.factor} \\cdot R_{${details.row + 1}}`;
+                } else {
+                    return `R_{${details.row + 1}} \\leftarrow \\frac{1}{${details.factor}} \\cdot R_{${details.row + 1}}`;
+                }
+            default:
+                return '';
+        }
+    }
+    
+    updateHistoryDisplay() {
+        const historyList = document.getElementById('history-list');
+        
+        // Clear previous content
+        historyList.innerHTML = '';
+        
+        // Display operations in reverse order (newest first)
+        const recentOperations = this.operationHistory.slice(-10).reverse();
+        
+        recentOperations.forEach((operation, index) => {
+            const historyItem = document.createElement('div');
+            historyItem.className = 'history-item';
+            
+            // Add classes for visual distinction
+            if (index === 0) {
+                historyItem.classList.add('recent');
+            }
+            if (index >= 4) {
+                historyItem.classList.add('faded');
+            }
+            
+            historyItem.innerHTML = `
+                <div class="operation-step">Step ${this.operationHistory.length - index}</div>
+                <div class="operation-latex">${operation.latex}</div>
+            `;
+            
+            historyList.appendChild(historyItem);
+        });
+    }
+    
+    clearOperationHistory() {
+        this.operationHistory = [];
+        this.updateHistoryDisplay();
     }
 
     generateCSV() {

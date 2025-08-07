@@ -91,10 +91,107 @@ body {
     right: 0;
     bottom: 215px;
     display: flex;
-    flex-direction: column;
     gap: 20px;
     padding: 20px;
     overflow: auto;
+}
+
+/* Operation History Panel */
+.operation-history {
+    position: relative;
+    backdrop-filter: blur(var(--blur));
+    background: var(--bg-glass);
+    border-radius: 24px;
+    padding: 25px 20px;
+    border: 1px solid var(--border);
+    box-shadow: 0 8px 32px var(--shadow);
+    width: 280px;
+    min-width: 280px;
+    height: fit-content;
+    max-height: calc(100vh - 275px);
+    overflow-y: auto;
+}
+
+.operation-history::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+}
+
+.operation-history h3 {
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.history-item {
+    backdrop-filter: blur(15px);
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 12px 15px;
+    border: 1px solid var(--border);
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.history-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    opacity: 0.5;
+}
+
+.history-item.recent {
+    border-color: var(--accent-primary);
+    background: rgba(0, 255, 65, 0.1);
+    box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
+}
+
+.history-item.faded {
+    opacity: 0.4;
+}
+
+.history-item .operation-step {
+    font-weight: 600;
+    color: var(--accent-primary);
+    margin-bottom: 4px;
+    font-size: 0.8rem;
+}
+
+.history-item .operation-latex {
+    color: var(--text-primary);
+    letter-spacing: 0.5px;
+}
+
+/* Hide history panel on smaller screens */
+@media (max-width: 1200px) {
+    .operation-history {
+        display: none;
+    }
+    
+    .main {
+        flex-direction: column;
+    }
 }
 
 .matrix-container {
