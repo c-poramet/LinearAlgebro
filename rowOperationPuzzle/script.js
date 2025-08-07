@@ -39,7 +39,9 @@ class RowOperationPuzzle {
         
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
-            if (e.target.tagName === 'INPUT') return;
+            // Allow F and Enter keys to work even when input is focused
+            const allowedKeysInInput = ['f', 'enter'];
+            if (e.target.tagName === 'INPUT' && !allowedKeysInInput.includes(e.key.toLowerCase())) return;
             
             if (this.vimMode) {
                 this.handleVimKeydown(e);
@@ -888,6 +890,10 @@ class RowOperationPuzzle {
             case 'enter':
                 if (!document.getElementById('vim-prompt-modal').classList.contains('hidden')) {
                     this.confirmVimPrompt();
+                } else if (!document.getElementById('multiply-modal').classList.contains('hidden')) {
+                    document.getElementById('apply-multiply-btn').click();
+                } else if (!document.getElementById('multiply-divide-modal').classList.contains('hidden')) {
+                    document.getElementById('apply-multiply-divide-btn').click();
                 } else if (this.isAwaitingAddOperationType()) {
                     this.addOperationType = 'add';
                     this.executeAddOperation();
