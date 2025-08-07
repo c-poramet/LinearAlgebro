@@ -260,9 +260,29 @@ class RowOperationPuzzle {
         const [row1, row2] = this.selectedRows;
         const target = this.targetRow;
         
-        // Perform R[target] = R[target] + R[row1] + R[row2] 
-        for (let j = 0; j < this.cols; j++) {
-            this.matrix[target][j] += this.matrix[row1][j] + this.matrix[row2][j];
+        // Check if target row is one of the source rows - handle this case properly
+        if (target === row1 || target === row2) {
+            // If target is one of the source rows, we need to be careful
+            // Create a copy of the target row before modification
+            const originalTarget = [...this.matrix[target]];
+            
+            if (target === row1) {
+                // R[target] = R[target] + R[target] + R[row2] = 2*R[target] + R[row2]
+                for (let j = 0; j < this.cols; j++) {
+                    this.matrix[target][j] = 2 * originalTarget[j] + this.matrix[row2][j];
+                }
+            } else if (target === row2) {
+                // R[target] = R[target] + R[row1] + R[target] = 2*R[target] + R[row1]
+                for (let j = 0; j < this.cols; j++) {
+                    this.matrix[target][j] = 2 * originalTarget[j] + this.matrix[row1][j];
+                }
+            }
+        } else {
+            // Standard case: target is different from both source rows
+            // R[target] = R[target] + R[row1] + R[row2]
+            for (let j = 0; j < this.cols; j++) {
+                this.matrix[target][j] += this.matrix[row1][j] + this.matrix[row2][j];
+            }
         }
         
         this.operationsCount++;
@@ -417,6 +437,12 @@ class RowOperationPuzzle {
         this.operationsCount = 0;
         this.updateOperationsDisplay();
         this.startTimer();
+        
+        // Hide header when game starts
+        const header = document.getElementById('game-header');
+        if (header) {
+            header.classList.add('hidden');
+        }
     }
     
     startTimer() {
@@ -487,6 +513,12 @@ class RowOperationPuzzle {
         this.updateOperationsDisplay();
         this.clearSelections();
         this.updateInstructions();
+        
+        // Show header when game resets
+        const header = document.getElementById('game-header');
+        if (header) {
+            header.classList.remove('hidden');
+        }
     }
     
     updateMatrixSettings() {

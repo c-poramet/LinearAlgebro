@@ -7,19 +7,9 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="header">
+    <div class="header" id="game-header">
         <h1>Row Operation Puzzle</h1>
         <p>Transform the matrix into upper triangular form using row operations</p>
-        <div class="stats">
-            <div class="stat-item">
-                <span class="stat-label">Time:</span>
-                <span id="timer">00:00</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-label">Operations:</span>
-                <span id="operations-count">0</span>
-            </div>
-        </div>
     </div>
 
     <div class="main">
@@ -37,6 +27,19 @@
         </div>
         
         <div class="controls">
+            <div class="control-header">
+                <div class="control-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Time:</span>
+                        <span id="timer">00:00</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Operations:</span>
+                        <span id="operations-count">0</span>
+                    </div>
+                </div>
+            </div>
+            
             <div class="operation-buttons">
                 <button id="add-btn" class="btn operation-btn" data-operation="add">
                     <span class="key-hint">A</span>
