@@ -194,14 +194,35 @@ body {
 }
 
 .matrix-row.selected {
-    background: rgba(0, 255, 65, 0.1);
-    border: 1px solid rgba(0, 255, 65, 0.3);
+    background: rgba(0, 255, 65, 0.15);
+    border: 2px solid rgba(0, 255, 65, 0.5);
 }
 
 .matrix-row.selected .matrix-element {
     border-color: var(--accent-primary);
-    background: rgba(0, 255, 65, 0.15);
-    box-shadow: 0 0 20px rgba(0, 255, 65, 0.4);
+    background: rgba(0, 255, 65, 0.2);
+    box-shadow: 0 0 20px rgba(0, 255, 65, 0.6);
+}
+
+.matrix-row.highlighted {
+    background: rgba(255, 255, 0, 0.2);
+    border: 2px solid rgba(255, 255, 0, 0.8);
+    animation: vimPulse 1.5s ease-in-out infinite;
+}
+
+.matrix-row.highlighted .matrix-element {
+    border-color: var(--accent-warning);
+    background: rgba(255, 255, 0, 0.25);
+    box-shadow: 0 0 25px rgba(255, 255, 0, 0.8);
+}
+
+@keyframes vimPulse {
+    0%, 100% {
+        box-shadow: 0 0 15px rgba(255, 255, 0, 0.6);
+    }
+    50% {
+        box-shadow: 0 0 30px rgba(255, 255, 0, 0.9);
+    }
 }
 
 .matrix-row.target {
@@ -213,6 +234,60 @@ body {
     border-color: var(--accent-error);
     background: rgba(255, 0, 65, 0.15);
     box-shadow: 0 0 20px rgba(255, 0, 65, 0.4);
+}
+
+/* Selection order indicators */
+.matrix-row.selected {
+    position: relative;
+}
+
+.matrix-row.selected::before {
+    content: '';
+    position: absolute;
+    left: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-left: 12px solid var(--accent-primary);
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    z-index: 10;
+}
+
+.matrix-row.selected::after {
+    content: attr(data-selection-order);
+    position: absolute;
+    left: -45px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--accent-primary);
+    color: #000;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: bold;
+    z-index: 11;
+    animation: selectionPulse 0.5s ease-out;
+}
+
+@keyframes selectionPulse {
+    0% {
+        transform: translateY(-50%) scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: translateY(-50%) scale(1.2);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-50%) scale(1);
+        opacity: 1;
+    }
 }
 
 .controls {
@@ -366,18 +441,23 @@ body {
 
 .success-message {
     position: absolute;
-    top: 50%;
+    top: 20px;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translateX(-50%) translateY(-100%);
     background: var(--bg-glass);
     backdrop-filter: blur(var(--blur));
     border-radius: 24px;
-    padding: 40px;
+    padding: 20px 30px;
     text-align: center;
     border: 1px solid var(--accent-success);
     box-shadow: 0 20px 60px rgba(0, 255, 65, 0.4), 0 0 40px rgba(0, 255, 65, 0.3);
     z-index: 1000;
     overflow: hidden;
+    transition: transform 0.5s ease;
+}
+
+.success-message:not(.hidden) {
+    transform: translateX(-50%) translateY(0);
 }
 
 .success-message::before {
@@ -452,9 +532,71 @@ body {
     font-size: 1rem;
     backdrop-filter: blur(15px);
     transition: all 0.3s ease;
+    appearance: textfield;
+    -moz-appearance: textfield; /* Firefox */
+}
+
+#multiply-input::-webkit-outer-spin-button,
+#multiply-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 #multiply-input:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 20px rgba(0, 255, 65, 0.4);
+}
+
+#multiply-divide-input {
+    width: 120px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    text-align: center;
+    font-size: 1rem;
+    backdrop-filter: blur(15px);
+    transition: all 0.3s ease;
+    appearance: textfield;
+    -moz-appearance: textfield; /* Firefox */
+}
+
+#multiply-divide-input::-webkit-outer-spin-button,
+#multiply-divide-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+#multiply-divide-input:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 20px rgba(0, 255, 65, 0.4);
+}
+
+#vim-prompt-input {
+    width: 120px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    text-align: center;
+    font-size: 1rem;
+    backdrop-filter: blur(15px);
+    transition: all 0.3s ease;
+    appearance: textfield;
+    -moz-appearance: textfield; /* Firefox */
+}
+
+#vim-prompt-input::-webkit-outer-spin-button,
+#vim-prompt-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+#vim-prompt-input:focus {
     outline: none;
     border-color: var(--accent-primary);
     box-shadow: 0 0 20px rgba(0, 255, 65, 0.4);
