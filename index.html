@@ -4,8 +4,183 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Linear Algebro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Monochrome theme with neon accents */
+            --bg-primary: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            --bg-secondary: rgba(255, 255, 255, 0.05);
+            --bg-glass: rgba(255, 255, 255, 0.03);
+            --bg-glass-hover: rgba(255, 255, 255, 0.08);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.6);
+            --accent-primary: #00ff41;
+            --accent-secondary: #00ff41;
+            --accent-success: #00ff41;
+            --accent-warning: #ffff00;
+            --accent-error: #ff0041;
+            --border: rgba(255, 255, 255, 0.1);
+            --border-hover: rgba(255, 255, 255, 0.2);
+            --shadow: rgba(0, 0, 0, 0.5);
+            --shadow-hover: rgba(0, 0, 0, 0.7);
+            --blur: 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Kanit', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .logo {
+            font-size: 4rem;
+            font-weight: 800;
+            color: var(--accent-primary);
+            margin-bottom: 60px;
+            text-shadow: 0 0 30px rgba(0, 255, 65, 0.8);
+            letter-spacing: -2px;
+            text-align: center;
+        }
+
+        .puzzles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        .puzzle-card {
+            backdrop-filter: blur(var(--blur));
+            background: var(--bg-glass);
+            border-radius: 24px;
+            padding: 40px 30px;
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 60px var(--shadow);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .puzzle-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border), transparent);
+        }
+
+        .puzzle-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--accent-primary);
+            box-shadow: 0 30px 80px var(--shadow-hover), 0 0 40px rgba(0, 255, 65, 0.4);
+        }
+
+        .puzzle-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .puzzle-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 15px;
+        }
+
+        .puzzle-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            font-size: 1rem;
+            margin-bottom: 25px;
+        }
+
+        .puzzle-status {
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-available {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-primary));
+            color: black;
+        }
+
+        .status-coming-soon {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+
+        .puzzle-card.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .puzzle-card.disabled:hover {
+            transform: none;
+            border-color: var(--border);
+            box-shadow: 0 20px 60px var(--shadow);
+        }
+
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 3rem;
+                margin-bottom: 40px;
+            }
+            
+            .puzzles-grid {
+                grid-template-columns: 1fr;
+                max-width: 400px;
+            }
+            
+            .puzzle-card {
+                padding: 30px 25px;
+            }
+        }
+    </style>
 </head>
 <body>
-    
+    <h1 class="logo">Linear Algebro</h1>
+
+    <div class="puzzles-grid">
+        <a href="rowOperationPuzzle/rowOperationPuzzle.html" class="puzzle-card">
+            <span class="puzzle-icon">🧮</span>
+            <h2 class="puzzle-title">Row Operations</h2>
+            <p class="puzzle-description">
+                Transform matrices using elementary row operations to achieve row echelon form
+            </p>
+            <span class="puzzle-status status-available">Available</span>
+        </a>
+
+        <div class="puzzle-card disabled">
+            <span class="puzzle-icon">🔢</span>
+            <h2 class="puzzle-title">Coming Soon</h2>
+            <p class="puzzle-description">
+                More linear algebra puzzles and challenges are on the way
+            </p>
+            <span class="puzzle-status status-coming-soon">Coming Soon</span>
+        </div>
+    </div>
 </body>
-</html>
+</html>    
