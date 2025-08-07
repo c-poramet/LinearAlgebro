@@ -263,6 +263,11 @@ class RowOperationPuzzle {
     }
     
     selectRow(rowIndex) {
+        // In VIM mode, clicking should not interfere
+        if (this.vimMode) {
+            return;
+        }
+        
         if (!this.currentOperation) {
             this.updateInstructions('Please select an operation first');
             return;
@@ -466,15 +471,31 @@ class RowOperationPuzzle {
     
     updateSelectionDisplay() {
         document.querySelectorAll('.matrix-row').forEach(row => {
-            row.classList.remove('selected', 'target');
+            row.classList.remove('selected', 'target', 'highlighted');
         });
         
+        // Show VIM highlight
+        if (this.vimMode) {
+            const highlightedRow = document.querySelector(`[data-row-index="${this.highlightedRow}"]`);
+            if (highlightedRow) {
+                highlightedRow.classList.add('highlighted');
+            }
+        }
+        
+        // Show selected rows
         this.selectedRows.forEach(index => {
-            document.querySelector(`[data-row-index="${index}"]`).classList.add('selected');
+            const row = document.querySelector(`[data-row-index="${index}"]`);
+            if (row) {
+                row.classList.add('selected');
+            }
         });
         
+        // Show target row
         if (this.targetRow !== null) {
-            document.querySelector(`[data-row-index="${this.targetRow}"]`).classList.add('target');
+            const targetRow = document.querySelector(`[data-row-index="${this.targetRow}"]`);
+            if (targetRow) {
+                targetRow.classList.add('target');
+            }
         }
     }
     
@@ -847,25 +868,23 @@ class RowOperationPuzzle {
 
     moveVimHighlight(direction) {
         this.highlightedRow = Math.max(0, Math.min(this.rows - 1, this.highlightedRow + direction));
-        this.updateVimHighlight();
+        this.updateSelectionDisplay();
+        this.updateInstructions();
     }
 
     updateVimHighlight() {
-        // Remove all highlights
-        document.querySelectorAll('.matrix-row').forEach(row => row.classList.remove('highlighted'));
-        
-        // Add highlight to current row
-        const rows = document.querySelectorAll('.matrix-row');
-        if (rows[this.highlightedRow]) {
-            rows[this.highlightedRow].classList.add('highlighted');
-        }
+        this.updateSelectionDisplay();
     }
 
     selectVimRow() {
+        if (!this.gameStarted) {
+            this.startGame();
+        }
+        
         if (this.vimOperation === 'add' || this.vimOperation === 'swap') {
             if (this.selectedRows.length < 2) {
                 this.selectedRows.push(this.highlightedRow);
-                this.renderMatrix(); // Update visual selection
+                this.updateSelectionDisplay(); // Update visual selection
                 
                 if (this.selectedRows.length === 2) {
                     if (this.vimOperation === 'add') {
@@ -879,7 +898,7 @@ class RowOperationPuzzle {
             }
         } else if (this.vimOperation === 'multiply') {
             this.selectedRows = [this.highlightedRow];
-            this.renderMatrix();
+            this.updateSelectionDisplay();
             this.showVimMultiplyPrompt();
         }
     }
