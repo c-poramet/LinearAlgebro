@@ -345,7 +345,9 @@ class RowOperationPuzzle {
     
     showMultiplyModal() {
         document.getElementById('multiply-modal').classList.remove('hidden');
-        document.getElementById('multiply-input').focus();
+        const input = document.getElementById('multiply-input');
+        input.focus();
+        input.select();
     }
     
     hideMultiplyModal() {
@@ -369,7 +371,9 @@ class RowOperationPuzzle {
         const rowIndex = this.selectedRows[0];
         document.getElementById('multiply-row').textContent = rowIndex + 1;
         document.getElementById('multiply-divide-modal').classList.remove('hidden');
-        document.getElementById('multiply-divide-input').focus();
+        const input = document.getElementById('multiply-divide-input');
+        input.focus();
+        input.select();
     }
 
     hideMultiplyDivideModal() {
