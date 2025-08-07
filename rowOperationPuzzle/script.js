@@ -15,6 +15,11 @@ class RowOperationPuzzle {
         this.gameStats = [];
         this.timerInterval = null;
         
+        // VIM mode properties
+        this.vimMode = false;
+        this.highlightedRow = 0;
+        this.vimOperation = null;
+        
         this.init();
     }
     
@@ -35,17 +40,21 @@ class RowOperationPuzzle {
         document.addEventListener('keydown', (e) => {
             if (e.target.tagName === 'INPUT') return;
             
-            switch(e.key.toLowerCase()) {
-                case 'a': this.selectOperation('add'); break;
-                case 's': this.selectOperation('swap'); break;
-                case 'd': this.selectOperation('multiply'); break;
-                default:
-                    // Number keys for row selection
-                    const num = parseInt(e.key);
-                    if (num >= 1 && num <= this.rows) {
-                        this.selectRow(num - 1);
-                    }
-                    break;
+            if (this.vimMode) {
+                this.handleVimKeydown(e);
+            } else {
+                switch(e.key.toLowerCase()) {
+                    case 'a': this.startVimOperation('add'); break;
+                    case 's': this.startVimOperation('swap'); break;
+                    case 'd': this.startVimOperation('multiply'); break;
+                    default:
+                        // Number keys for row selection (fallback)
+                        const num = parseInt(e.key);
+                        if (num >= 1 && num <= this.rows) {
+                            this.selectRow(num - 1);
+                        }
+                        break;
+                }
             }
         });
         
@@ -434,18 +443,25 @@ class RowOperationPuzzle {
     }
     
     clearSelections() {
-        this.selectedRows = [];
-        this.targetRow = null;
-        this.currentOperation = null;
-        this.addOperationType = 'add'; // Reset to default
-        this.multiplyOperationType = 'multiply'; // Reset to default
-        this.hideAddModal(); // Hide the add modal if it's open
-        this.hideMultiplyDivideModal(); // Hide the multiply-divide modal if it's open
-        
-        document.querySelectorAll('.operation-btn').forEach(btn => btn.classList.remove('active'));
-        document.querySelectorAll('.matrix-row').forEach(row => {
-            row.classList.remove('selected', 'target');
-        });
+        if (!this.vimMode) {
+            this.selectedRows = [];
+            this.targetRow = null;
+            this.currentOperation = null;
+            this.addOperationType = 'add'; // Reset to default
+            this.multiplyOperationType = 'multiply'; // Reset to default
+            this.hideAddModal(); // Hide the add modal if it's open
+            this.hideMultiplyDivideModal(); // Hide the multiply-divide modal if it's open
+            
+            document.querySelectorAll('.operation-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.matrix-row').forEach(row => {
+                row.classList.remove('selected', 'target');
+            });
+        } else {
+            // In VIM mode, only clear visual selections but keep VIM state
+            document.querySelectorAll('.matrix-row').forEach(row => {
+                row.classList.remove('selected', 'target');
+            });
+        }
     }
     
     updateSelectionDisplay() {
@@ -469,6 +485,11 @@ class RowOperationPuzzle {
         if (message) {
             instructionText.textContent = message;
             selectionStatus.textContent = '';
+            return;
+        }
+
+        if (this.vimMode) {
+            this.updateVimInstructions();
             return;
         }
         
@@ -504,6 +525,47 @@ class RowOperationPuzzle {
                 selectionStatus.textContent = '';
                 break;
         }
+    }
+
+    updateVimInstructions() {
+        const instructionText = document.getElementById('instruction-text');
+        const selectionStatus = document.getElementById('selection-status');
+
+        if (this.isAwaitingAddOperationType()) {
+            instructionText.textContent = 'Press A (or Enter) for addition, F for subtraction';
+            selectionStatus.textContent = '';
+            return;
+        }
+
+        if (this.isAwaitingMultiplyOperationType()) {
+            instructionText.textContent = 'Press D (or Enter) for multiply, F for divide';
+            selectionStatus.textContent = '';
+            return;
+        }
+
+        switch (this.vimOperation) {
+            case 'add':
+                if (this.selectedRows.length === 0) {
+                    instructionText.textContent = 'VIM Mode: Q/E to navigate, SPACE to select first row';
+                } else if (this.selectedRows.length === 1) {
+                    instructionText.textContent = 'VIM Mode: Q/E to navigate, SPACE to select second row';
+                }
+                break;
+                
+            case 'swap':
+                if (this.selectedRows.length === 0) {
+                    instructionText.textContent = 'VIM Mode: Q/E to navigate, SPACE to select first row';
+                } else if (this.selectedRows.length === 1) {
+                    instructionText.textContent = 'VIM Mode: Q/E to navigate, SPACE to select second row';
+                }
+                break;
+                
+            case 'multiply':
+                instructionText.textContent = 'VIM Mode: Q/E to navigate, SPACE to select row';
+                break;
+        }
+        
+        selectionStatus.textContent = `Row ${this.highlightedRow + 1} highlighted | ESC to exit VIM mode`;
     }
     
     getAddSelectionStatus() {
@@ -717,7 +779,199 @@ class RowOperationPuzzle {
         a.click();
         window.URL.revokeObjectURL(url);
     }
-    
+
+    // VIM Mode Methods
+    startVimOperation(operation) {
+        this.vimMode = true;
+        this.vimOperation = operation;
+        this.highlightedRow = 0;
+        this.selectedRows = [];
+        this.currentOperation = operation;
+        
+        // Highlight first row
+        this.updateVimHighlight();
+        this.updateInstructions();
+        
+        // Update button states
+        document.querySelectorAll('.operation-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelector(`[data-operation="${operation}"]`).classList.add('active');
+    }
+
+    handleVimKeydown(e) {
+        switch(e.key.toLowerCase()) {
+            case 'q': // Move up
+                this.moveVimHighlight(-1);
+                break;
+            case 'e': // Move down
+                this.moveVimHighlight(1);
+                break;
+            case ' ': // Select row
+                e.preventDefault();
+                this.selectVimRow();
+                break;
+            case 'escape': // Exit VIM mode
+                this.exitVimMode();
+                break;
+            case 'a': // Handle operation-specific keys
+                if (this.isAwaitingAddOperationType()) {
+                    this.addOperationType = 'add';
+                    this.executeAddOperation();
+                }
+                break;
+            case 'd':
+                if (this.isAwaitingMultiplyOperationType()) {
+                    this.multiplyOperationType = 'multiply';
+                    this.executeMultiplyOperation();
+                }
+                break;
+            case 'f': // Special mode switch
+                if (this.isAwaitingAddOperationType()) {
+                    this.addOperationType = 'subtract';
+                    this.executeAddOperation();
+                } else if (this.isAwaitingMultiplyOperationType()) {
+                    this.multiplyOperationType = 'divide';
+                    this.executeMultiplyOperation();
+                }
+                break;
+            case 'enter':
+                if (this.isAwaitingAddOperationType()) {
+                    this.addOperationType = 'add';
+                    this.executeAddOperation();
+                } else if (this.isAwaitingMultiplyOperationType()) {
+                    this.multiplyOperationType = 'multiply';
+                    this.executeMultiplyOperation();
+                }
+                break;
+        }
+    }
+
+    moveVimHighlight(direction) {
+        this.highlightedRow = Math.max(0, Math.min(this.rows - 1, this.highlightedRow + direction));
+        this.updateVimHighlight();
+    }
+
+    updateVimHighlight() {
+        // Remove all highlights
+        document.querySelectorAll('.matrix-row').forEach(row => row.classList.remove('highlighted'));
+        
+        // Add highlight to current row
+        const rows = document.querySelectorAll('.matrix-row');
+        if (rows[this.highlightedRow]) {
+            rows[this.highlightedRow].classList.add('highlighted');
+        }
+    }
+
+    selectVimRow() {
+        if (this.vimOperation === 'add' || this.vimOperation === 'swap') {
+            if (this.selectedRows.length < 2) {
+                this.selectedRows.push(this.highlightedRow);
+                this.renderMatrix(); // Update visual selection
+                
+                if (this.selectedRows.length === 2) {
+                    if (this.vimOperation === 'add') {
+                        this.showVimAddPrompt();
+                    } else {
+                        this.executeSwapOperation();
+                    }
+                } else {
+                    this.updateInstructions();
+                }
+            }
+        } else if (this.vimOperation === 'multiply') {
+            this.selectedRows = [this.highlightedRow];
+            this.renderMatrix();
+            this.showVimMultiplyPrompt();
+        }
+    }
+
+    showVimAddPrompt() {
+        // Update instruction to show VIM controls
+        document.getElementById('instruction-text').textContent = 
+            `Press A (or Enter) for addition, F for subtraction`;
+    }
+
+    showVimMultiplyPrompt() {
+        // Update instruction to show VIM controls
+        document.getElementById('instruction-text').textContent = 
+            `Press D (or Enter) for multiply, F for divide`;
+    }
+
+    isAwaitingAddOperationType() {
+        return this.vimMode && this.vimOperation === 'add' && this.selectedRows.length === 2;
+    }
+
+    isAwaitingMultiplyOperationType() {
+        return this.vimMode && this.vimOperation === 'multiply' && this.selectedRows.length === 1;
+    }
+
+    executeAddOperation() {
+        const [row1, row2] = this.selectedRows;
+        
+        for (let j = 0; j < this.cols; j++) {
+            if (this.addOperationType === 'add') {
+                this.matrix[row1][j] += this.matrix[row2][j];
+            } else {
+                this.matrix[row1][j] -= this.matrix[row2][j];
+            }
+        }
+        
+        this.operationsCount++;
+        this.updateOperationsDisplay();
+        this.renderMatrix();
+        this.exitVimMode();
+        this.checkWinCondition();
+    }
+
+    executeSwapOperation() {
+        const [row1, row2] = this.selectedRows;
+        
+        for (let j = 0; j < this.cols; j++) {
+            const temp = this.matrix[row1][j];
+            this.matrix[row1][j] = this.matrix[row2][j];
+            this.matrix[row2][j] = temp;
+        }
+        
+        this.operationsCount++;
+        this.updateOperationsDisplay();
+        this.renderMatrix();
+        this.exitVimMode();
+        this.checkWinCondition();
+    }
+
+    executeMultiplyOperation() {
+        const value = 2; // Default multiplication value for VIM mode
+        const rowIndex = this.selectedRows[0];
+        
+        for (let j = 0; j < this.cols; j++) {
+            if (this.multiplyOperationType === 'multiply') {
+                this.matrix[rowIndex][j] *= value;
+            } else {
+                this.matrix[rowIndex][j] /= value;
+            }
+        }
+        
+        this.operationsCount++;
+        this.updateOperationsDisplay();
+        this.renderMatrix();
+        this.exitVimMode();
+        this.checkWinCondition();
+    }
+
+    exitVimMode() {
+        this.vimMode = false;
+        this.vimOperation = null;
+        this.highlightedRow = 0;
+        this.addOperationType = 'add'; // Reset to default
+        this.multiplyOperationType = 'multiply'; // Reset to default
+        
+        // Clear highlights and selections
+        document.querySelectorAll('.matrix-row').forEach(row => {
+            row.classList.remove('highlighted');
+        });
+        
+        this.clearSelections();
+    }
+
     generateCSV() {
         const headers = ['Date', 'Time (ms)', 'Operations', 'Matrix Size', 'Seed'];
         const rows = this.gameStats.map(stat => [

@@ -204,6 +204,17 @@ body {
     box-shadow: 0 0 20px rgba(0, 255, 65, 0.4);
 }
 
+.matrix-row.highlighted {
+    background: rgba(255, 255, 0, 0.1);
+    border: 1px solid rgba(255, 255, 0, 0.5);
+}
+
+.matrix-row.highlighted .matrix-element {
+    border-color: var(--accent-warning);
+    background: rgba(255, 255, 0, 0.15);
+    box-shadow: 0 0 20px rgba(255, 255, 0, 0.6);
+}
+
 .matrix-row.target {
     background: rgba(255, 0, 65, 0.1);
     border: 1px solid rgba(255, 0, 65, 0.3);
