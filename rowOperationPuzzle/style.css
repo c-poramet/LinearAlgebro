@@ -224,10 +224,10 @@ body {
     border-bottom: none;
     box-shadow: 0 -4px 20px var(--shadow);
     position: fixed;
-    bottom: 15px;
+    bottom: 0px;
     left: 0;
     right: 0;
-    height: 200px;
+    height: 215px;
     overflow: hidden;
     z-index: 100;
 }
@@ -474,7 +474,7 @@ body {
 
 .options-btn {
     position: fixed;
-    bottom: 0px;
+    bottom: 20px;
     right: 20px;
     width: 56px;
     height: 56px;
@@ -501,7 +501,7 @@ body {
 
 .new-matrix-btn {
     position: fixed;
-    bottom: 0px;
+    bottom: 20px;
     left: 20px;
     padding: 12px 20px;
     border-radius: 12px;
