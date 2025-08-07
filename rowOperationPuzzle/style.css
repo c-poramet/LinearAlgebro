@@ -89,7 +89,7 @@ body {
     top: 0;
     left: 0;
     right: 0;
-    bottom: 200px;
+    bottom: 215px;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -107,7 +107,7 @@ body {
     box-shadow: 0 8px 32px var(--shadow);
     overflow: visible;
     flex: 1;
-    min-height: calc(100vh - 260px);
+    min-height: calc(100vh - 275px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -219,12 +219,12 @@ body {
     backdrop-filter: blur(var(--blur));
     background: var(--bg-glass);
     border-radius: 20px 20px 0 0;
-    padding: 25px 30px 35px 30px;
+    padding: 25px 30px;
     border: 1px solid var(--border);
     border-bottom: none;
     box-shadow: 0 -4px 20px var(--shadow);
     position: fixed;
-    bottom: 0;
+    bottom: 15px;
     left: 0;
     right: 0;
     height: 200px;
