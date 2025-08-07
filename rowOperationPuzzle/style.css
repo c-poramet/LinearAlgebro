@@ -136,6 +136,7 @@ body {
     flex-direction: column;
     gap: 20px;
     padding: 20px;
+    padding-bottom: 200px;
     overflow: hidden;
 }
 
@@ -256,13 +257,17 @@ body {
 .controls {
     backdrop-filter: blur(var(--blur));
     background: var(--bg-glass);
-    border-radius: 0;
+    border-radius: 20px 20px 0 0;
     padding: 25px 30px;
     border: 1px solid var(--border);
-    border-top: none;
+    border-bottom: none;
     box-shadow: 0 -4px 20px var(--shadow);
-    position: relative;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
     overflow: hidden;
+    z-index: 100;
 }
 
 .controls::before {
