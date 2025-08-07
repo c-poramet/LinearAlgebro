@@ -577,17 +577,28 @@ class RowOperationPuzzle {
     }
     
     showSuccessMessage(totalTime) {
-        const minutes = Math.floor(totalTime / 60000);
-        const seconds = Math.floor((totalTime % 60000) / 1000);
-        const timeStr = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        // Make all matrix cells glow neon green
+        document.querySelectorAll('.matrix-cell').forEach(cell => {
+            cell.style.backgroundColor = 'var(--accent-success)';
+            cell.style.color = 'black';
+            cell.style.boxShadow = '0 0 20px rgba(0, 255, 65, 0.8)';
+            cell.style.border = '1px solid var(--accent-success)';
+        });
         
-        document.getElementById('final-time').textContent = timeStr;
-        document.getElementById('final-operations').textContent = this.operationsCount;
         document.getElementById('success-message').classList.remove('hidden');
     }
     
     newGame() {
         document.getElementById('success-message').classList.add('hidden');
+        
+        // Reset matrix cell styles
+        document.querySelectorAll('.matrix-cell').forEach(cell => {
+            cell.style.backgroundColor = '';
+            cell.style.color = '';
+            cell.style.boxShadow = '';
+            cell.style.border = '';
+        });
+        
         this.generateMatrix();
         this.renderMatrix();
         this.resetGame();

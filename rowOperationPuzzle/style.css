@@ -366,18 +366,23 @@ body {
 
 .success-message {
     position: absolute;
-    top: 50%;
+    top: 20px;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translateX(-50%) translateY(-100%);
     background: var(--bg-glass);
     backdrop-filter: blur(var(--blur));
     border-radius: 24px;
-    padding: 40px;
+    padding: 20px 30px;
     text-align: center;
     border: 1px solid var(--accent-success);
     box-shadow: 0 20px 60px rgba(0, 255, 65, 0.4), 0 0 40px rgba(0, 255, 65, 0.3);
     z-index: 1000;
     overflow: hidden;
+    transition: transform 0.5s ease;
+}
+
+.success-message:not(.hidden) {
+    transform: translateX(-50%) translateY(0);
 }
 
 .success-message::before {
