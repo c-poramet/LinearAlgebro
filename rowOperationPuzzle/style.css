@@ -53,9 +53,8 @@ body {
     padding: 0;
     margin: 0;
     transition: all 0.3s ease;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
+    overflow: auto;
+    position: relative;
 }
 
 .stats {
@@ -86,12 +85,16 @@ body {
 }
 
 .main {
-    flex: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 200px;
     display: flex;
     flex-direction: column;
     gap: 20px;
-    padding: 20px 20px 200px 20px;
-    overflow: hidden;
+    padding: 20px;
+    overflow: auto;
 }
 
 .matrix-container {
@@ -102,8 +105,9 @@ body {
     padding: 30px;
     border: 1px solid var(--border);
     box-shadow: 0 8px 32px var(--shadow);
-    overflow: hidden;
-    flex: 1;
+    overflow: visible;
+    min-height: 400px;
+    height: fit-content;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -223,6 +227,7 @@ body {
     bottom: 0;
     left: 0;
     right: 0;
+    height: 200px;
     overflow: hidden;
     z-index: 100;
 }
