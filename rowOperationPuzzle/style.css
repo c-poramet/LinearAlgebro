@@ -106,8 +106,8 @@ body {
     border: 1px solid var(--border);
     box-shadow: 0 8px 32px var(--shadow);
     overflow: visible;
-    min-height: 400px;
-    height: fit-content;
+    flex: 1;
+    min-height: calc(100vh - 260px);
     display: flex;
     align-items: center;
     justify-content: center;
