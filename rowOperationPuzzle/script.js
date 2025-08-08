@@ -17,6 +17,12 @@ class RowOperationPuzzle {
         
         // Operation history for LaTeX display
         this.operationHistory = [];
+        this.mathJaxTimeout = null;
+        
+        // Undo/Redo functionality
+        this.matrixHistory = [];
+        this.historyIndex = -1;
+        this.maxHistorySize = 20; // Reduced from 50 for better performance
         
         // VIM mode properties
         this.vimMode = false;
@@ -42,6 +48,18 @@ class RowOperationPuzzle {
         
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
+            // Handle Ctrl+Z and Ctrl+Y for undo/redo
+            if (e.ctrlKey && e.key.toLowerCase() === 'z' && !e.shiftKey) {
+                e.preventDefault();
+                this.undo();
+                return;
+            }
+            if (e.ctrlKey && (e.key.toLowerCase() === 'y' || (e.key.toLowerCase() === 'z' && e.shiftKey))) {
+                e.preventDefault();
+                this.redo();
+                return;
+            }
+            
             // Allow F and Enter keys to work even when input is focused
             const allowedKeysInInput = ['f', 'enter'];
             if (e.target.tagName === 'INPUT' && !allowedKeysInInput.includes(e.key.toLowerCase())) return;
@@ -154,6 +172,15 @@ class RowOperationPuzzle {
         // New Matrix button
         document.getElementById('new-matrix-btn').addEventListener('click', () => {
             this.generateNewMatrix();
+        });
+        
+        // Undo/Redo buttons
+        document.getElementById('undo-btn').addEventListener('click', () => {
+            this.undo();
+        });
+        
+        document.getElementById('redo-btn').addEventListener('click', () => {
+            this.redo();
         });
         
         // Number input buttons for options
@@ -357,6 +384,9 @@ class RowOperationPuzzle {
     }
     
     performAddOperation() {
+        // Save state before making changes
+        this.saveMatrixState();
+        
         const [row1, row2] = this.selectedRows;
         const target = this.targetRow;
         
@@ -385,6 +415,9 @@ class RowOperationPuzzle {
     }
     
     performSwapOperation() {
+        // Save state before making changes
+        this.saveMatrixState();
+        
         const [row1, row2] = this.selectedRows;
         
         // Swap rows
@@ -442,6 +475,9 @@ class RowOperationPuzzle {
     }
     
     applyMultiply() {
+        // Save state before making changes
+        this.saveMatrixState();
+        
         const multiplier = parseFloat(document.getElementById('multiply-input').value);
         if (multiplier === 0 || isNaN(multiplier)) {
             alert('Value cannot be zero or invalid');
@@ -475,6 +511,9 @@ class RowOperationPuzzle {
     }
 
     applyMultiplyDivide() {
+        // Save state before making changes
+        this.saveMatrixState();
+        
         const value = parseFloat(document.getElementById('multiply-divide-input').value);
         if (value === 0 || isNaN(value)) {
             alert('Value cannot be zero or invalid');
@@ -758,12 +797,16 @@ class RowOperationPuzzle {
         this.startTime = null;
         this.operationsCount = 0;
         this.clearOperationHistory();
+        this.clearMatrixHistory();
         clearInterval(this.timerInterval);
         
         document.getElementById('timer').textContent = '00:00';
         this.updateOperationsDisplay();
         this.clearSelections();
         this.updateInstructions();
+        
+        // Save initial matrix state
+        this.saveMatrixState();
     }
     
     updateMatrixSettings() {
@@ -1053,6 +1096,9 @@ class RowOperationPuzzle {
     }
 
     executeAddOperation() {
+        // Save state before making changes
+        this.saveMatrixState();
+        
         let targetRow, sourceRow;
         
         if (this.vimMode && this.selectedRows.length === 2) {
@@ -1095,6 +1141,9 @@ class RowOperationPuzzle {
     }
 
     executeSwapOperation() {
+        // Save state before making changes
+        this.saveMatrixState();
+        
         const [row1, row2] = this.selectedRows;
         
         for (let j = 0; j < this.cols; j++) {
@@ -1117,6 +1166,9 @@ class RowOperationPuzzle {
     }
 
     executeMultiplyOperation(value = 2) {
+        // Save state before making changes
+        this.saveMatrixState();
+        
         const rowIndex = this.selectedRows[0];
         
         for (let j = 0; j < this.cols; j++) {
@@ -1244,15 +1296,100 @@ class RowOperationPuzzle {
             historyList.appendChild(historyItem);
         });
         
-        // Trigger MathJax rendering for the new content
-        if (typeof MathJax !== 'undefined') {
-            MathJax.typesetPromise([historyList]).catch((err) => console.log(err.message));
-        }
+        // Debounce MathJax rendering to improve performance
+        clearTimeout(this.mathJaxTimeout);
+        this.mathJaxTimeout = setTimeout(() => {
+            if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+                MathJax.typesetPromise([historyList]).catch((err) => console.log(err.message));
+            }
+        }, 100);
     }
     
     clearOperationHistory() {
         this.operationHistory = [];
         this.updateHistoryDisplay();
+    }
+
+    // Undo/Redo functionality
+    saveMatrixState() {
+        // Remove any states after current index (when user makes a new move after undo)
+        this.matrixHistory = this.matrixHistory.slice(0, this.historyIndex + 1);
+        
+        // Add current state
+        const state = {
+            matrix: this.matrix.map(row => [...row]), // Deep copy
+            operationsCount: this.operationsCount,
+            operationHistory: [...this.operationHistory] // Copy operation history
+        };
+        
+        this.matrixHistory.push(state);
+        this.historyIndex++;
+        
+        // Keep history size manageable
+        if (this.matrixHistory.length > this.maxHistorySize) {
+            this.matrixHistory.shift();
+            this.historyIndex--;
+        }
+        
+        this.updateUndoRedoButtons();
+    }
+    
+    undo() {
+        if (this.historyIndex <= 0) return;
+        
+        this.historyIndex--;
+        const state = this.matrixHistory[this.historyIndex];
+        
+        // Restore state
+        this.matrix = state.matrix.map(row => [...row]); // Deep copy
+        this.operationsCount = state.operationsCount;
+        this.operationHistory = [...state.operationHistory];
+        
+        // Update display
+        this.renderMatrix();
+        this.updateOperationsDisplay();
+        this.updateHistoryDisplay();
+        this.updateUndoRedoButtons();
+        
+        // Exit any active modes
+        this.exitVimMode();
+        this.clearSelection();
+    }
+    
+    redo() {
+        if (this.historyIndex >= this.matrixHistory.length - 1) return;
+        
+        this.historyIndex++;
+        const state = this.matrixHistory[this.historyIndex];
+        
+        // Restore state
+        this.matrix = state.matrix.map(row => [...row]); // Deep copy
+        this.operationsCount = state.operationsCount;
+        this.operationHistory = [...state.operationHistory];
+        
+        // Update display
+        this.renderMatrix();
+        this.updateOperationsDisplay();
+        this.updateHistoryDisplay();
+        this.updateUndoRedoButtons();
+        
+        // Exit any active modes
+        this.exitVimMode();
+        this.clearSelection();
+    }
+    
+    updateUndoRedoButtons() {
+        const undoBtn = document.getElementById('undo-btn');
+        const redoBtn = document.getElementById('redo-btn');
+        
+        undoBtn.disabled = this.historyIndex <= 0;
+        redoBtn.disabled = this.historyIndex >= this.matrixHistory.length - 1;
+    }
+    
+    clearMatrixHistory() {
+        this.matrixHistory = [];
+        this.historyIndex = -1;
+        this.updateUndoRedoButtons();
     }
 
     generateCSV() {
