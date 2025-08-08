@@ -105,6 +105,11 @@ class RowOperationPuzzle {
         });
 
         // Add operation modal
+        document.getElementById('add-operation-btn').addEventListener('click', () => {
+            this.addOperationType = 'add';
+            this.hideAddModal();
+        });
+        
         document.getElementById('subtract-operation-btn').addEventListener('click', () => {
             this.addOperationType = 'subtract';
             this.hideAddModal();

@@ -54,15 +54,15 @@
             </div>
             
             <div class="operation-buttons">
-                <button id="add-btn" class="btn operation-btn" data-operation="add">
+                <button id="add-btn" class="btn operation-btn" data-operation="add" title="Add or subtract two rows (Keyboard: A)">
                     <span class="key-hint">A</span>
                     Add Rows
                 </button>
-                <button id="swap-btn" class="btn operation-btn" data-operation="swap">
+                <button id="swap-btn" class="btn operation-btn" data-operation="swap" title="Swap positions of two rows (Keyboard: S)">
                     <span class="key-hint">S</span>
                     Swap Rows
                 </button>
-                <button id="multiply-btn" class="btn operation-btn" data-operation="multiply">
+                <button id="multiply-btn" class="btn operation-btn" data-operation="multiply" title="Multiply or divide a row by a constant (Keyboard: D)">
                     <span class="key-hint">D</span>
                     Multiply Row
                 </button>
@@ -80,13 +80,13 @@
         <div class="modal-content">
             <h3>Multiply Row by Constant</h3>
             <div class="multiply-controls">
-                <button id="decrease-btn" class="btn secondary">-</button>
-                <input type="number" id="multiply-input" value="1" step="0.1">
-                <button id="increase-btn" class="btn secondary">+</button>
+                <button id="decrease-btn" class="btn secondary" title="Decrease multiplier by 0.1">-</button>
+                <input type="number" id="multiply-input" value="1" step="0.1" title="Enter multiplication factor">
+                <button id="increase-btn" class="btn secondary" title="Increase multiplier by 0.1">+</button>
             </div>
             <div class="modal-buttons">
-                <button id="apply-multiply-btn" class="btn primary">Apply</button>
-                <button id="cancel-multiply-btn" class="btn secondary">Cancel</button>
+                <button id="apply-multiply-btn" class="btn primary" title="Multiply selected row by this value">Apply</button>
+                <button id="cancel-multiply-btn" class="btn secondary" title="Cancel multiplication">Cancel</button>
             </div>
         </div>
     </div>
@@ -94,31 +94,32 @@
     <!-- Add Operation Modal -->
     <div id="add-modal" class="modal hidden">
         <div class="modal-content">
-            <h3>Add or Subtract Rows</h3>
+            <h3>Row Addition/Subtraction</h3>
             <p>Row <span id="add-row1"></span> and Row <span id="add-row2"></span></p>
             <div class="modal-buttons">
-                <button id="subtract-operation-btn" class="btn secondary">A - B</button>
+                <button id="add-operation-btn" class="btn primary" title="Add: Replace first row with sum of both rows">A + B</button>
+                <button id="subtract-operation-btn" class="btn secondary" title="Subtract: Replace first row with difference (A - B)">A - B</button>
             </div>
-            <p class="modal-hint">Click A - B for subtraction, or click any row for addition</p>
+            <p class="modal-hint">Choose operation: A + B (addition) or A - B (subtraction). Result replaces Row A.</p>
         </div>
     </div>
 
     <!-- Multiply/Divide Operation Modal -->
     <div id="multiply-divide-modal" class="modal hidden">
         <div class="modal-content">
-            <h3>Multiply or Divide Row</h3>
+            <h3>Row Multiplication/Division</h3>
             <p>Row <span id="multiply-row"></span></p>
             <div class="multiply-controls">
-                <button id="multiply-decrease-btn" class="btn secondary">-</button>
-                <input type="number" id="multiply-divide-input" value="1" step="0.1">
-                <button id="multiply-increase-btn" class="btn secondary">+</button>
+                <button id="multiply-decrease-btn" class="btn secondary" title="Decrease value by 0.1">-</button>
+                <input type="number" id="multiply-divide-input" value="1" step="0.1" title="Enter multiplication factor (or divisor if using ÷)">
+                <button id="multiply-increase-btn" class="btn secondary" title="Increase value by 0.1">+</button>
             </div>
             <div class="modal-buttons">
-                <button id="divide-operation-btn" class="btn secondary">÷ (Divide)</button>
-                <button id="apply-multiply-divide-btn" class="btn primary">Apply</button>
-                <button id="cancel-multiply-divide-btn" class="btn secondary">Cancel</button>
+                <button id="divide-operation-btn" class="btn secondary" title="Divide row by this value">÷ (Divide)</button>
+                <button id="apply-multiply-divide-btn" class="btn primary" title="Multiply row by this value">× (Multiply)</button>
+                <button id="cancel-multiply-divide-btn" class="btn secondary" title="Cancel operation">Cancel</button>
             </div>
-            <p class="modal-hint">Click ÷ for division, or Apply for multiplication</p>
+            <p class="modal-hint">Choose × to multiply row by value, or ÷ to divide row by value</p>
         </div>
     </div>
 
@@ -128,23 +129,23 @@
             <h3 id="vim-prompt-title">Enter Value</h3>
             <p id="vim-prompt-message">Enter the value:</p>
             <div class="multiply-controls">
-                <button id="vim-decrease-btn" class="btn secondary">-</button>
-                <input type="number" id="vim-prompt-input" value="2" step="0.1">
-                <button id="vim-increase-btn" class="btn secondary">+</button>
+                <button id="vim-decrease-btn" class="btn secondary" title="Decrease value by 0.1">-</button>
+                <input type="number" id="vim-prompt-input" value="2" step="0.1" title="Enter the operation value">
+                <button id="vim-increase-btn" class="btn secondary" title="Increase value by 0.1">+</button>
             </div>
             <div class="modal-buttons">
-                <button id="vim-prompt-confirm" class="btn primary">Confirm</button>
-                <button id="vim-prompt-cancel" class="btn secondary">Cancel</button>
+                <button id="vim-prompt-confirm" class="btn primary" title="Apply operation with this value">Confirm</button>
+                <button id="vim-prompt-cancel" class="btn secondary" title="Cancel operation and return to VIM mode">Cancel</button>
             </div>
-            <p class="modal-hint">Enter value and press Confirm, or press Cancel/ESC to exit</p>
+            <p class="modal-hint">Enter value and press Confirm to apply operation, or Cancel/ESC to return</p>
         </div>
     </div>
 
     <!-- Options Panel -->
-    <button id="options-btn" class="options-btn">⚙️</button>
-    <button id="new-matrix-btn" class="new-matrix-btn">NEW MATRIX</button>
-    <button id="undo-btn" class="undo-btn" title="Undo (Ctrl+Z)">↶</button>
-    <button id="redo-btn" class="redo-btn" title="Redo (Ctrl+Y)">↷</button>
+    <button id="options-btn" class="options-btn" title="Open settings and options">⚙️</button>
+    <button id="new-matrix-btn" class="new-matrix-btn" title="Generate a new random matrix puzzle">NEW MATRIX</button>
+    <button id="undo-btn" class="undo-btn" title="Undo last operation (Ctrl+Z)">↶</button>
+    <button id="redo-btn" class="redo-btn" title="Redo last undone operation (Ctrl+Y)">↷</button>
     <div id="options-panel" class="options-panel hidden">
         <h3>Options</h3>
         <div class="option-group">
