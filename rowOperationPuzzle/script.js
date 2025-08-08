@@ -384,9 +384,6 @@ class RowOperationPuzzle {
     }
     
     performAddOperation() {
-        // Save state before making changes
-        this.saveMatrixState();
-        
         const [row1, row2] = this.selectedRows;
         const target = this.targetRow;
         
@@ -410,14 +407,15 @@ class RowOperationPuzzle {
         this.operationsCount++;
         this.updateOperationsDisplay();
         this.renderMatrix();
+        
+        // Save state after the operation is complete
+        this.saveMatrixState();
+        
         this.clearSelections();
         this.checkWinCondition();
     }
     
     performSwapOperation() {
-        // Save state before making changes
-        this.saveMatrixState();
-        
         const [row1, row2] = this.selectedRows;
         
         // Swap rows
@@ -432,6 +430,10 @@ class RowOperationPuzzle {
         this.operationsCount++;
         this.updateOperationsDisplay();
         this.renderMatrix();
+        
+        // Save state after the operation is complete
+        this.saveMatrixState();
+        
         this.clearSelections();
         this.checkWinCondition();
     }
@@ -475,9 +477,6 @@ class RowOperationPuzzle {
     }
     
     applyMultiply() {
-        // Save state before making changes
-        this.saveMatrixState();
-        
         const multiplier = parseFloat(document.getElementById('multiply-input').value);
         if (multiplier === 0 || isNaN(multiplier)) {
             alert('Value cannot be zero or invalid');
@@ -505,15 +504,16 @@ class RowOperationPuzzle {
         this.operationsCount++;
         this.updateOperationsDisplay();
         this.renderMatrix();
+        
+        // Save state after the operation is complete
+        this.saveMatrixState();
+        
         this.hideMultiplyModal();
         this.clearSelections();
         this.checkWinCondition();
     }
 
     applyMultiplyDivide() {
-        // Save state before making changes
-        this.saveMatrixState();
-        
         const value = parseFloat(document.getElementById('multiply-divide-input').value);
         if (value === 0 || isNaN(value)) {
             alert('Value cannot be zero or invalid');
@@ -524,10 +524,10 @@ class RowOperationPuzzle {
         
         // Apply multiplication or division based on the operation type
         for (let j = 0; j < this.cols; j++) {
-            if (this.multiplyOperationType === 'divide') {
-                this.matrix[rowIndex][j] /= value;
-            } else {
+            if (this.multiplyOperationType === 'multiply') {
                 this.matrix[rowIndex][j] *= value;
+            } else {
+                this.matrix[rowIndex][j] /= value;
             }
         }
         
@@ -541,6 +541,10 @@ class RowOperationPuzzle {
         this.operationsCount++;
         this.updateOperationsDisplay();
         this.renderMatrix();
+        
+        // Save state after the operation is complete
+        this.saveMatrixState();
+        
         this.hideMultiplyDivideModal();
         this.clearSelections();
         this.checkWinCondition();
@@ -1096,9 +1100,6 @@ class RowOperationPuzzle {
     }
 
     executeAddOperation() {
-        // Save state before making changes
-        this.saveMatrixState();
-        
         let targetRow, sourceRow;
         
         if (this.vimMode && this.selectedRows.length === 2) {
@@ -1136,14 +1137,15 @@ class RowOperationPuzzle {
         this.operationsCount++;
         this.updateOperationsDisplay();
         this.renderMatrix();
+        
+        // Save state after the operation is complete
+        this.saveMatrixState();
+        
         this.exitVimMode();
         this.checkWinCondition();
     }
 
     executeSwapOperation() {
-        // Save state before making changes
-        this.saveMatrixState();
-        
         const [row1, row2] = this.selectedRows;
         
         for (let j = 0; j < this.cols; j++) {
@@ -1161,14 +1163,15 @@ class RowOperationPuzzle {
         this.operationsCount++;
         this.updateOperationsDisplay();
         this.renderMatrix();
+        
+        // Save state after the operation is complete
+        this.saveMatrixState();
+        
         this.exitVimMode();
         this.checkWinCondition();
     }
 
     executeMultiplyOperation(value = 2) {
-        // Save state before making changes
-        this.saveMatrixState();
-        
         const rowIndex = this.selectedRows[0];
         
         for (let j = 0; j < this.cols; j++) {
@@ -1189,6 +1192,10 @@ class RowOperationPuzzle {
         this.operationsCount++;
         this.updateOperationsDisplay();
         this.renderMatrix();
+        
+        // Save state after the operation is complete
+        this.saveMatrixState();
+        
         this.exitVimMode();
         this.checkWinCondition();
     }
@@ -1353,7 +1360,7 @@ class RowOperationPuzzle {
         
         // Exit any active modes
         this.exitVimMode();
-        this.clearSelection();
+        this.clearSelections();
     }
     
     redo() {
@@ -1375,7 +1382,7 @@ class RowOperationPuzzle {
         
         // Exit any active modes
         this.exitVimMode();
-        this.clearSelection();
+        this.clearSelections();
     }
     
     updateUndoRedoButtons() {
