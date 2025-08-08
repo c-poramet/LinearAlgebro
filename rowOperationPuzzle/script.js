@@ -1053,20 +1053,32 @@ class RowOperationPuzzle {
     }
 
     executeAddOperation() {
-        const [row1, row2] = this.selectedRows;
+        let targetRow, sourceRow;
+        
+        if (this.vimMode) {
+            // In VIM mode, the currently highlighted row is the target
+            // The other selected row is the source
+            targetRow = this.highlightedRow;
+            sourceRow = this.selectedRows.find(row => row !== this.highlightedRow);
+        } else {
+            // In regular mode, use the existing logic
+            const [row1, row2] = this.selectedRows;
+            targetRow = row1;
+            sourceRow = row2;
+        }
         
         for (let j = 0; j < this.cols; j++) {
             if (this.addOperationType === 'add') {
-                this.matrix[row1][j] += this.matrix[row2][j];
+                this.matrix[targetRow][j] += this.matrix[sourceRow][j];
             } else {
-                this.matrix[row1][j] -= this.matrix[row2][j];
+                this.matrix[targetRow][j] -= this.matrix[sourceRow][j];
             }
         }
         
         // Add to operation history
         this.addOperationToHistory('add', {
-            sourceRow: row2,
-            targetRow: row1,
+            sourceRow: sourceRow,
+            targetRow: targetRow,
             operation: this.addOperationType
         });
         
