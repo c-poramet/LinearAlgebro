@@ -1055,11 +1055,16 @@ class RowOperationPuzzle {
     executeAddOperation() {
         let targetRow, sourceRow;
         
-        if (this.vimMode) {
-            // In VIM mode, the currently highlighted row is the target
-            // The other selected row is the source
+        if (this.vimMode && this.selectedRows.length === 2) {
+            // In VIM mode, the currently highlighted row is always the target
+            // The source is whichever selected row is NOT the highlighted row
             targetRow = this.highlightedRow;
             sourceRow = this.selectedRows.find(row => row !== this.highlightedRow);
+            
+            // If highlightedRow is not in selectedRows, use the first selected row as source
+            if (sourceRow === undefined) {
+                sourceRow = this.selectedRows[0];
+            }
         } else {
             // In regular mode, use the existing logic
             const [row1, row2] = this.selectedRows;
