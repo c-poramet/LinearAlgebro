@@ -286,6 +286,15 @@ class RowOperationPuzzle {
             for (let j = 0; j < this.cols; j++) {
                 const element = document.createElement('div');
                 element.className = 'matrix-element';
+                
+                // Add lower triangle highlighting for non-zero elements
+                if (i > j) { // Lower triangle (below main diagonal)
+                    element.classList.add('lower-triangle');
+                    if (this.matrix[i][j] === 0) {
+                        element.classList.add('zero');
+                    }
+                }
+                
                 element.textContent = this.formatNumber(this.matrix[i][j]);
                 rowElement.appendChild(element);
             }
