@@ -800,6 +800,8 @@ class RowOperationPuzzle {
             cell.style.border = '';
         });
         
+        // Use current timestamp for new random seed
+        this.seed = Date.now();
         this.generateMatrix();
         this.renderMatrix();
         this.resetGame();
