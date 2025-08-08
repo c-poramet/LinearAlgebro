@@ -1113,35 +1113,63 @@ class RowOperationPuzzle {
         
         if (this.vimMode && this.selectedRows.length === 2) {
             // In VIM mode, the currently highlighted row is always the target
-            // The source is whichever selected row is NOT the highlighted row
             targetRow = this.highlightedRow;
-            sourceRow = this.selectedRows.find(row => row !== this.highlightedRow);
             
-            // If highlightedRow is not in selectedRows, use the first selected row as source
-            if (sourceRow === undefined) {
-                sourceRow = this.selectedRows[0];
+            if (this.addOperationType === 'subtract') {
+                // For subtraction in VIM mode: result = first_selected - second_selected
+                // The result goes to the highlighted row
+                for (let j = 0; j < this.cols; j++) {
+                    this.matrix[targetRow][j] = this.matrix[this.selectedRows[0]][j] - this.matrix[this.selectedRows[1]][j];
+                }
+                
+                // Add to operation history
+                this.addOperationToHistory('add', {
+                    sourceRow: this.selectedRows[1], // second selected (being subtracted)
+                    targetRow: targetRow,
+                    operation: this.addOperationType,
+                    firstRow: this.selectedRows[0] // first selected (base)
+                });
+            } else {
+                // For addition, use the existing logic
+                sourceRow = this.selectedRows.find(row => row !== this.highlightedRow);
+                
+                // If highlightedRow is not in selectedRows, use the first selected row as source
+                if (sourceRow === undefined) {
+                    sourceRow = this.selectedRows[0];
+                }
+                
+                for (let j = 0; j < this.cols; j++) {
+                    this.matrix[targetRow][j] += this.matrix[sourceRow][j];
+                }
+                
+                // Add to operation history
+                this.addOperationToHistory('add', {
+                    sourceRow: sourceRow,
+                    targetRow: targetRow,
+                    operation: this.addOperationType
+                });
             }
         } else {
             // In regular mode, use the existing logic
             const [row1, row2] = this.selectedRows;
             targetRow = row1;
             sourceRow = row2;
-        }
-        
-        for (let j = 0; j < this.cols; j++) {
-            if (this.addOperationType === 'add') {
-                this.matrix[targetRow][j] += this.matrix[sourceRow][j];
-            } else {
-                this.matrix[targetRow][j] -= this.matrix[sourceRow][j];
+            
+            for (let j = 0; j < this.cols; j++) {
+                if (this.addOperationType === 'add') {
+                    this.matrix[targetRow][j] += this.matrix[sourceRow][j];
+                } else {
+                    this.matrix[targetRow][j] -= this.matrix[sourceRow][j];
+                }
             }
+            
+            // Add to operation history
+            this.addOperationToHistory('add', {
+                sourceRow: sourceRow,
+                targetRow: targetRow,
+                operation: this.addOperationType
+            });
         }
-        
-        // Add to operation history
-        this.addOperationToHistory('add', {
-            sourceRow: sourceRow,
-            targetRow: targetRow,
-            operation: this.addOperationType
-        });
         
         this.operationsCount++;
         this.updateOperationsDisplay();
