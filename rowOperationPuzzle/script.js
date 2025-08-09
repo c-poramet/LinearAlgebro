@@ -48,11 +48,19 @@ class RowOperationPuzzle {
         
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
-            // Handle Escape key to close help modal
+            // Handle Escape key to close modals
             if (e.key === 'Escape') {
                 const helpModal = document.getElementById('help-modal');
+                const vimPromptModal = document.getElementById('vim-prompt-modal');
+                
                 if (!helpModal.classList.contains('hidden')) {
                     this.hideHelpModal();
+                    e.preventDefault();
+                    return;
+                }
+                
+                if (!vimPromptModal.classList.contains('hidden')) {
+                    this.cancelVimPrompt();
                     e.preventDefault();
                     return;
                 }
@@ -70,8 +78,8 @@ class RowOperationPuzzle {
                 return;
             }
             
-            // Allow F and Enter keys to work even when input is focused
-            const allowedKeysInInput = ['f', 'enter'];
+            // Allow F, Enter, and Escape keys to work even when input is focused
+            const allowedKeysInInput = ['f', 'enter', 'escape'];
             if (e.target.tagName === 'INPUT' && !allowedKeysInInput.includes(e.key.toLowerCase())) return;
             
             if (this.vimMode) {
