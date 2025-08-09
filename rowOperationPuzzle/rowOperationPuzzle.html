@@ -100,7 +100,7 @@
                 <button id="add-operation-btn" class="btn primary" title="Add: Replace first row with sum of both rows">A + B</button>
                 <button id="subtract-operation-btn" class="btn secondary" title="Subtract: Replace first row with difference (A - B)">A - B</button>
             </div>
-            <p class="modal-hint">Choose operation: A + B (addition) or A - B (subtraction). Result replaces Row A.</p>
+            <p class="modal-hint">Choose operation: A + B (addition) or A - B (subtraction). Result replaces the target row.</p>
         </div>
     </div>
 
@@ -146,6 +146,7 @@
     <button id="new-matrix-btn" class="new-matrix-btn" title="Generate a new random matrix puzzle">NEW MATRIX</button>
     <button id="undo-btn" class="undo-btn" title="Undo last operation (Ctrl+Z)">↶</button>
     <button id="redo-btn" class="redo-btn" title="Redo last undone operation (Ctrl+Y)">↷</button>
+    <button id="help-btn" class="help-btn" title="Show game rules and tutorial">?</button>
     <div id="options-panel" class="options-panel hidden">
         <h3>Options</h3>
         <div class="option-group">
@@ -176,6 +177,93 @@
             <button id="generate-matrix-btn" class="btn primary">New Matrix</button>
             <button id="export-stats-btn" class="btn secondary">Export Stats</button>
             <button id="close-options-btn" class="btn secondary">Close</button>
+        </div>
+    </div>
+
+    <!-- Help/Tutorial Modal -->
+    <div id="help-modal" class="modal hidden">
+        <div class="modal-content help-modal-content">
+            <div class="help-header">
+                <h2>📚 How to Play - Row Operation Puzzle</h2>
+                <button id="close-help-btn" class="close-btn" title="Close tutorial">×</button>
+            </div>
+            
+            <div class="help-content">
+                <section class="help-section">
+                    <h3>🎯 Goal</h3>
+                    <p>Transform the matrix into <strong>upper triangular form</strong> by making all elements below the main diagonal equal to zero.</p>
+                    <div class="help-example">
+                        <p>Example target (3×3 matrix):</p>
+                        <div class="matrix-example">
+                            [* * *]<br>
+                            [0 * *]<br>
+                            [0 0 *]
+                        </div>
+                        <p><em>Red highlighted cells show elements that need to be zeroed</em></p>
+                        <p><em>Green highlighted cells show elements already correctly zeroed</em></p>
+                    </div>
+                </section>
+
+                <section class="help-section">
+                    <h3>🔧 Three Operations</h3>
+                    
+                    <div class="operation-help">
+                        <h4>1. 🔀 Swap Rows (S)</h4>
+                        <p>Exchange the positions of two rows completely.</p>
+                        <p><strong>Usage:</strong> Click Swap → Select two rows → Operation applied instantly</p>
+                    </div>
+
+                    <div class="operation-help">
+                        <h4>2. ➕➖ Add/Subtract Rows (A)</h4>
+                        <p>Combine two rows using addition or subtraction.</p>
+                        <p><strong>A + B:</strong> Replace the target row (usually the first selected) with (Row A + Row B)</p>
+                        <p><strong>A - B:</strong> Replace the target row (usually the first selected) with (Row A - Row B)</p>
+                        <p><strong>Usage:</strong> Click Add → Select two rows → Choose A+B or A-B → Result goes to target row</p>
+                    </div>
+
+                    <div class="operation-help">
+                        <h4>3. ✖️➗ Multiply/Divide Row (D)</h4>
+                        <p>Scale a single row by multiplying or dividing by a constant.</p>
+                        <p><strong>Usage:</strong> Click Multiply → Select one row → Enter value → Choose × or ÷</p>
+                    </div>
+                </section>
+
+                <section class="help-section">
+                    <h3>⌨️ VIM Mode (Advanced)</h3>
+                    <p>Press <strong>V</strong> to toggle VIM mode for keyboard-only control:</p>
+                    <ul>
+                        <li><strong>↑↓ Arrow keys:</strong> Navigate between rows (yellow highlight)</li>
+                        <li><strong>Space:</strong> Select/deselect current row (blue highlight)</li>
+                        <li><strong>A:</strong> Add selected rows → result goes to highlighted row</li>
+                        <li><strong>F:</strong> Subtract selected rows (first selected - second selected) → result goes to highlighted row</li>
+                        <li><strong>S:</strong> Swap selected rows</li>
+                        <li><strong>D:</strong> Multiply/divide highlighted row</li>
+                        <li><strong>V:</strong> Exit VIM mode</li>
+                    </ul>
+                </section>
+
+                <section class="help-section">
+                    <h3>🎮 Controls & Tips</h3>
+                    <ul>
+                        <li><strong>Undo/Redo:</strong> Use buttons or Ctrl+Z / Ctrl+Y</li>
+                        <li><strong>New Matrix:</strong> Generate a fresh puzzle</li>
+                        <li><strong>Timer & Counter:</strong> Track your solving time and operations</li>
+                        <li><strong>Operation History:</strong> Review your moves with LaTeX notation</li>
+                        <li><strong>Strategy Tip:</strong> Work column by column, left to right</li>
+                        <li><strong>Visual Cues:</strong> Red cells need zeroing, green cells are correct</li>
+                    </ul>
+                </section>
+
+                <section class="help-section">
+                    <h3>🏆 Example Strategy</h3>
+                    <ol>
+                        <li>Focus on the first column: make all elements below the first row zero</li>
+                        <li>Move to the second column: make all elements below the second row zero</li>
+                        <li>Continue until you reach upper triangular form</li>
+                        <li>Use row operations strategically to eliminate elements</li>
+                    </ol>
+                </section>
+            </div>
         </div>
     </div>
 

@@ -48,6 +48,16 @@ class RowOperationPuzzle {
         
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
+            // Handle Escape key to close help modal
+            if (e.key === 'Escape') {
+                const helpModal = document.getElementById('help-modal');
+                if (!helpModal.classList.contains('hidden')) {
+                    this.hideHelpModal();
+                    e.preventDefault();
+                    return;
+                }
+            }
+            
             // Handle Ctrl+Z and Ctrl+Y for undo/redo
             if (e.ctrlKey && e.key.toLowerCase() === 'z' && !e.shiftKey) {
                 e.preventDefault();
@@ -177,6 +187,15 @@ class RowOperationPuzzle {
         // New Matrix button
         document.getElementById('new-matrix-btn').addEventListener('click', () => {
             this.generateNewMatrix();
+        });
+        
+        // Help button
+        document.getElementById('help-btn').addEventListener('click', () => {
+            this.showHelpModal();
+        });
+        
+        document.getElementById('close-help-btn').addEventListener('click', () => {
+            this.hideHelpModal();
         });
         
         // Undo/Redo buttons
@@ -488,6 +507,14 @@ class RowOperationPuzzle {
     hideMultiplyDivideModal() {
         document.getElementById('multiply-divide-modal').classList.add('hidden');
         // Don't clear selections here - we still need them for the operation
+    }
+    
+    showHelpModal() {
+        document.getElementById('help-modal').classList.remove('hidden');
+    }
+    
+    hideHelpModal() {
+        document.getElementById('help-modal').classList.add('hidden');
     }
     
     applyMultiply() {
